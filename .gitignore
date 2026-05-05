@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editor / IDE / agentic tools
+.obsidian/
+.vscode/
+.idea/
+.claude/settings.local.json
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets — defensive (no key files should ever live here)
+*.env
+.env.local
+*.pem
+secrets.json
