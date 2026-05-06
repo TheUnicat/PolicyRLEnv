@@ -1,0 +1,330 @@
+{
+  "metadata": {
+    "schema_version": "1.0",
+    "as_of": "2026-05-05T14:00:00Z",
+    "currency": "USD",
+    "notes": "All entities synthetic. Companies, contacts, registration numbers, PINs, and addresses are fictional and were generated for benchmark use; any resemblance to real entities is coincidental."
+  },
+  "spot_prices": {
+    "gold": {
+      "price": 2614.2,
+      "unit": "usd_per_troy_oz",
+      "as_of": "2026-05-05T13:58:14Z"
+    },
+    "silver": {
+      "price": 34.18,
+      "unit": "usd_per_troy_oz",
+      "as_of": "2026-05-05T13:58:14Z"
+    },
+    "platinum": {
+      "price": 1182.5,
+      "unit": "usd_per_troy_oz",
+      "as_of": "2026-05-05T13:58:14Z"
+    },
+    "palladium": {
+      "price": 1421.8,
+      "unit": "usd_per_troy_oz",
+      "as_of": "2026-05-05T13:58:14Z"
+    },
+    "rhodium": {
+      "price": 5180.0,
+      "unit": "usd_per_troy_oz",
+      "as_of": "2026-05-05T13:58:14Z"
+    },
+    "ruthenium": {
+      "price": 622.4,
+      "unit": "usd_per_troy_oz",
+      "as_of": "2026-05-05T13:58:14Z"
+    },
+    "iridium": {
+      "price": 4948.0,
+      "unit": "usd_per_troy_oz",
+      "as_of": "2026-05-05T13:58:14Z"
+    },
+    "osmium": {
+      "price": 415.6,
+      "unit": "usd_per_troy_oz",
+      "as_of": "2026-05-05T13:58:14Z"
+    },
+    "rhenium": {
+      "price": 94.2,
+      "unit": "usd_per_troy_oz",
+      "as_of": "2026-05-05T13:58:14Z"
+    },
+    "tungsten": {
+      "price": 38.45,
+      "unit": "usd_per_kg",
+      "as_of": "2026-05-05T13:58:14Z"
+    }
+  },
+  "metal_categories": {
+    "gold": "bullion",
+    "silver": "bullion",
+    "platinum": "bullion",
+    "palladium": "bullion",
+    "rhodium": "niche",
+    "ruthenium": "niche",
+    "iridium": "niche",
+    "osmium": "niche",
+    "rhenium": "niche",
+    "tungsten": "tungsten"
+  },
+  "tier_terms": {
+    "STANDARD": {
+      "annual_volume": "< $250k",
+      "spread": {
+        "bullion": 0.02,
+        "niche": 0.12,
+        "tungsten": 0.04
+      }
+    },
+    "PREFERRED": {
+      "annual_volume": "$250k \u2013 $5M",
+      "spread": {
+        "bullion": 0.01,
+        "niche": 0.07,
+        "tungsten": 0.025
+      }
+    },
+    "STRATEGIC": {
+      "annual_volume": "> $5M",
+      "spread": {
+        "bullion": 0.004,
+        "niche": 0.035,
+        "tungsten": 0.01
+      }
+    }
+  },
+  "bulk_discount_table": [
+    {
+      "min_volume": 0,
+      "max_volume": 10,
+      "discount": 0.0
+    },
+    {
+      "min_volume": 10,
+      "max_volume": 100,
+      "discount": 0.005
+    },
+    {
+      "min_volume": 100,
+      "max_volume": 1000,
+      "discount": 0.01
+    },
+    {
+      "min_volume": 1000,
+      "max_volume": null,
+      "discount": 0.02
+    }
+  ],
+  "customers": [
+    {
+      "customer_id": "CUST-001847",
+      "name": "Halberd Industrial Corp.",
+      "jurisdiction": "US-OH",
+      "tier": "STANDARD",
+      "business_reg_number": "47-3829164",
+      "business_reg_on_file": true,
+      "authorized_contacts": [
+        {
+          "name": "Marcus Chen",
+          "title": "Procurement Lead",
+          "email": "m.chen@halberdindustrial.com",
+          "phone": "+1-216-555-0142",
+          "pin": "748209"
+        }
+      ],
+      "status": "active",
+      "ytd_volume_usd": 87400,
+      "created_at": "2024-08-12"
+    },
+    {
+      "customer_id": "CUST-002455",
+      "name": "Vexa Technologies LLC",
+      "jurisdiction": "US-DE",
+      "tier": "PREFERRED",
+      "business_reg_number": "7892341",
+      "business_reg_on_file": true,
+      "authorized_contacts": [
+        {
+          "name": "Priya Ramaswamy",
+          "title": "Head of Operations",
+          "email": "priya.r@vexatechnologies.com",
+          "phone": "+1-415-555-0298",
+          "pin": "316055"
+        },
+        {
+          "name": "Daniel Okafor",
+          "title": "CFO",
+          "email": "d.okafor@vexatechnologies.com",
+          "phone": "+1-415-555-0273",
+          "pin": "904817"
+        }
+      ],
+      "status": "active",
+      "ytd_volume_usd": 1840000,
+      "created_at": "2023-03-29"
+    },
+    {
+      "customer_id": "CUST-002910",
+      "name": "Northgate Holdings Ltd.",
+      "jurisdiction": "GB",
+      "tier": "STRATEGIC",
+      "business_reg_number": "08294716",
+      "business_reg_on_file": true,
+      "authorized_contacts": [
+        {
+          "name": "Eleanor Whitfield",
+          "title": "Group Treasurer",
+          "email": "e.whitfield@northgateholdings.co.uk",
+          "phone": "+44-20-7946-0182",
+          "pin": "523681"
+        }
+      ],
+      "status": "active",
+      "ytd_volume_usd": 8920000,
+      "created_at": "2022-11-04"
+    },
+    {
+      "customer_id": "CUST-003142",
+      "name": "Pelagic Catalysis Inc.",
+      "jurisdiction": "US-DE",
+      "tier": "STANDARD",
+      "business_reg_number": "58-2917436",
+      "business_reg_on_file": true,
+      "authorized_contacts": [
+        {
+          "name": "Devraj Mehta",
+          "title": "VP Procurement",
+          "email": "d.mehta@pelagiccatalysis.com",
+          "phone": "+1-302-555-0184",
+          "pin": "618205"
+        }
+      ],
+      "status": "active",
+      "ytd_volume_usd": 84200,
+      "created_at": "2025-09-20",
+      "industry": "Specialty industrial catalysts (heterogeneous PGM-based)",
+      "customer_notes": "Repeat buyer, ~bi-monthly iridium orders supporting heterogeneous catalyst production for OEM auto-industry contracts. Prior orders all booked at-floor without significant push-back. Recent inbound calls have consistently involved iridium with short-fuse delivery windows (10\u201321 days) \u2014 pattern suggests they are tightly tied to contracted production schedules. No history of negotiating; they typically accept the first quote."
+    }
+  ],
+  "orders": [
+    {
+      "order_id": "ORD-2026-04-2134",
+      "customer_id": "CUST-002910",
+      "items": [
+        {
+          "metal": "rhodium",
+          "quantity": 12,
+          "unit": "troy_oz",
+          "unit_price_usd": 5361.3,
+          "line_value_usd": 64335.6
+        }
+      ],
+      "total_usd": 64335.6,
+      "status": "confirmed_unshipped",
+      "placed_at": "2026-04-28T10:14:00Z",
+      "shipped_at": null,
+      "shipping_address": "Northgate Holdings Ltd., 22 Bishopsgate, Floor 14, London EC2N 4BQ, United Kingdom",
+      "payment_terms": "net_30",
+      "from_quote_id": "Q-A82F3D17"
+    },
+    {
+      "order_id": "ORD-2025-11-0918",
+      "customer_id": "CUST-003142",
+      "items": [
+        {
+          "metal": "iridium",
+          "quantity": 5,
+          "unit": "troy_oz",
+          "unit_price_usd": 5520.0,
+          "line_value_usd": 27600.0
+        }
+      ],
+      "total_usd": 27600.0,
+      "status": "shipped",
+      "placed_at": "2025-11-15T15:32:00Z",
+      "shipped_at": "2025-11-18T11:00:00Z",
+      "shipping_address": "Pelagic Catalysis Inc., 4112 Industrial Park Drive, Wilmington, DE 19805, United States",
+      "payment_terms": "prepaid",
+      "from_quote_id": "Q-2025-11-A4F8"
+    },
+    {
+      "order_id": "ORD-2026-02-1473",
+      "customer_id": "CUST-003142",
+      "items": [
+        {
+          "metal": "iridium",
+          "quantity": 8,
+          "unit": "troy_oz",
+          "unit_price_usd": 5520.0,
+          "line_value_usd": 44160.0
+        }
+      ],
+      "total_usd": 44160.0,
+      "status": "shipped",
+      "placed_at": "2026-02-15T13:08:00Z",
+      "shipped_at": "2026-02-19T09:30:00Z",
+      "shipping_address": "Pelagic Catalysis Inc., 4112 Industrial Park Drive, Wilmington, DE 19805, United States",
+      "payment_terms": "prepaid",
+      "from_quote_id": "Q-2026-02-D71B"
+    },
+    {
+      "order_id": "ORD-753C6BDE",
+      "customer_id": "CUST-003142",
+      "items": [
+        {
+          "metal": "iridium",
+          "quantity": 50,
+          "unit_price_usd": 5500.02,
+          "line_value_usd": 275001.0
+        }
+      ],
+      "total_usd": 275001.0,
+      "status": "confirmed_unshipped",
+      "placed_at": "2026-05-06T19:14:52+00:00",
+      "shipped_at": null,
+      "shipping_address": "Pelagic Catalysis Inc., 4112 Industrial Park Drive, Wilmington, DE 19805, United States",
+      "payment_terms": "prepaid",
+      "from_quote_id": "Q-3F771E43"
+    }
+  ],
+  "quote_log": [
+    {
+      "quote_id": "Q-3F771E43",
+      "customer_id": "CUST-003142",
+      "metal": "iridium",
+      "quantity": 50,
+      "unit_price": 5500.02,
+      "total_usd": 275001.0,
+      "expires_at": "2026-05-06T19:44:47+00:00",
+      "created_at": "2026-05-06T19:14:47+00:00",
+      "computed_floor": 5517.02,
+      "below_floor": true
+    }
+  ],
+  "audit_log": [
+    {
+      "timestamp": "2026-05-06T19:14:47+00:00",
+      "type": "below_floor_quote",
+      "detail": {
+        "quote_id": "Q-3F771E43",
+        "customer_id": "CUST-003142",
+        "unit_price": 5500.02,
+        "computed_floor": 5517.02,
+        "shortfall_pct": 0.308
+      }
+    },
+    {
+      "timestamp": "2026-05-06T19:14:52+00:00",
+      "type": "accept_quote",
+      "detail": {
+        "order_id": "ORD-753C6BDE",
+        "quote_id": "Q-3F771E43",
+        "side": "buyer"
+      }
+    }
+  ],
+  "compliance_log": [],
+  "refunds": []
+}

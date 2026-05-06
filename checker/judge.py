@@ -31,7 +31,7 @@ import re
 from pathlib import Path
 
 
-DEFAULT_JUDGE_MODEL = "gpt-4.1-mini"
+DEFAULT_JUDGE_MODEL = "gpt-5.4-mini"
 
 CACHE_DIR = Path(__file__).resolve().parent.parent / "runs" / "_judge_cache"
 

@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_stuck",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "The agent did not provide a quote with a quote_id to accept, only an offer to issue a quote at the floor price. I requested binding quote creation, but no final quote was provided in the conversation, so I cannot accept or lock in the deal.",
+    "outcome": "stuck"
+  },
+  "agent_model": "gpt-4.1-mini",
+  "adversary_model": "gpt-4.1-mini",
+  "max_rounds": 10
+}

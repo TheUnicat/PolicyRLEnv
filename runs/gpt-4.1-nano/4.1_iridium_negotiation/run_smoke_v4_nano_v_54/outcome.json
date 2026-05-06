@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_other",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Seller offered a quote below target, but no quote_id was provided so I cannot accept it into a binding order on my side.",
+    "outcome": "other"
+  },
+  "agent_model": "gpt-4.1-nano",
+  "adversary_model": "gpt-5.4",
+  "max_rounds": 10
+}

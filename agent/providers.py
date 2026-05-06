@@ -125,7 +125,7 @@ class OpenAIProvider(Provider):
                         args = {}
 
                     result = dispatch_tool(name, args)
-                    self.input_items.append(d)
+                    self.input_items.append(self._strip_output_only(d))
                     self.input_items.append({
                         "type": "function_call_output",
                         "call_id": d["call_id"],
@@ -145,11 +145,11 @@ class OpenAIProvider(Provider):
                     if text:
                         assistant_msgs.append(text)
                         events.append({"t": time.time(), "event": "assistant_message", "content": text})
-                    self.input_items.append(d)
+                    self.input_items.append(self._strip_output_only(d))
 
                 else:
                     # reasoning, refusal, custom tool calls, etc. — preserve for context
-                    self.input_items.append(d)
+                    self.input_items.append(self._strip_output_only(d))
                     events.append({"t": time.time(), "event": "other_item", "type": t})
 
             if not had_tool_calls:
@@ -211,6 +211,15 @@ class OpenAIProvider(Provider):
         if isinstance(item, dict):
             return item
         return json.loads(json.dumps(item, default=str))
+
+    # Fields that the Responses API returns on output but rejects when re-fed
+    # as input. gpt-5.5 in particular rejects items with `status`. Newer models
+    # may add more fields here over time.
+    _OUTPUT_ONLY_KEYS = ("status",)
+
+    @classmethod
+    def _strip_output_only(cls, d: dict) -> dict:
+        return {k: v for k, v in d.items() if k not in cls._OUTPUT_ONLY_KEYS}
 
     @staticmethod
     def _extract_text(item: dict) -> str:

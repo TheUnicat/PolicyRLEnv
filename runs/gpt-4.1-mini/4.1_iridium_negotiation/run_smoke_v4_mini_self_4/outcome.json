@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Accepted final binding quote at $5,516.02 per oz, within target range and locking the deal for 50 oz.",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-4.1-mini",
+  "adversary_model": "gpt-4.1-mini",
+  "max_rounds": 10
+}

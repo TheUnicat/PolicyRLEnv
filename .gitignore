@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Other caches
+runs/_judge_cache/
+
 # Virtual environments
 .venv/
 venv/

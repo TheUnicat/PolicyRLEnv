@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Accepted binding quote Q-6C6CAF1F at $5,500/oz totaling $275,000 for 50 oz of iridium, order ORD-C85B326B confirmed, meeting target pricing and terms.",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-4.1-mini",
+  "max_rounds": 10
+}

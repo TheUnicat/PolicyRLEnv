@@ -1,0 +1,16 @@
+[
+  {
+    "turn": 1,
+    "side": "adversary",
+    "status": "complete",
+    "tool_calls_used": 0,
+    "error": null
+  },
+  {
+    "turn": 2,
+    "side": "agent",
+    "status": "error",
+    "tool_calls_used": 3,
+    "error": "Error code: 400 - {'error': {'message': \"Unknown parameter: 'input[2].status'.\", 'type': 'invalid_request_error', 'param': 'input[2].status', 'code': 'unknown_parameter'}}"
+  }
+]
