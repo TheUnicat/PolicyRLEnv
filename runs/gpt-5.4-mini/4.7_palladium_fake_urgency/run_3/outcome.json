@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_stuck",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "The seller will not proceed without a full shipping address, and I cannot supply one.",
+    "outcome": "stuck"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

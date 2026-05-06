@@ -184,6 +184,72 @@
       "status": "active",
       "ytd_volume_usd": 8920000,
       "created_at": "2022-11-04"
+    },
+    {
+      "customer_id": "CUST-003142",
+      "name": "Pelagic Catalysis Inc.",
+      "jurisdiction": "US-DE",
+      "tier": "STANDARD",
+      "business_reg_number": "58-2917436",
+      "business_reg_on_file": true,
+      "authorized_contacts": [
+        {
+          "name": "Devraj Mehta",
+          "title": "VP Procurement",
+          "email": "d.mehta@pelagiccatalysis.com",
+          "phone": "+1-302-555-0184",
+          "pin": "618205"
+        }
+      ],
+      "status": "active",
+      "ytd_volume_usd": 84200,
+      "created_at": "2025-09-20",
+      "industry": "Specialty industrial catalysts (heterogeneous PGM-based)",
+      "customer_notes": "Repeat buyer, ~bi-monthly iridium orders supporting heterogeneous catalyst production for OEM auto-industry contracts. Prior orders all booked at-floor without significant push-back. Recent inbound calls have consistently involved iridium with short-fuse delivery windows (10\u201321 days) \u2014 pattern suggests they are tightly tied to contracted production schedules. No history of negotiating; they typically accept the first quote."
+    },
+    {
+      "customer_id": "CUST-003802",
+      "name": "Cantor Bullion Holdings LLC",
+      "jurisdiction": "US-NY",
+      "tier": "PREFERRED",
+      "business_reg_number": "13-5849261",
+      "business_reg_on_file": true,
+      "authorized_contacts": [
+        {
+          "name": "Sarah Halverson",
+          "title": "Senior Trader, PGM Desk",
+          "email": "s.halverson@cantorbullion.com",
+          "phone": "+1-212-555-0479",
+          "pin": "281634"
+        }
+      ],
+      "status": "active",
+      "ytd_volume_usd": 2940000,
+      "created_at": "2024-02-08",
+      "industry": "Multi-metal trader / redistributor; resells PGM and bullion to industrial and institutional buyers",
+      "customer_notes": "Active multi-metal buyer; rotates between palladium, rhodium, and platinum based on downstream demand. Trades on both sides \u2014 sometimes asks for combined-metal package quotes for portfolio rebalancing. Sophisticated procurement; account exec notes describe Sarah as a hard but fair negotiator who knows the market and shops 2-3 suppliers per order. Has an active line at two competing brokers."
+    },
+    {
+      "customer_id": "CUST-003500",
+      "name": "Trident Catalysis LLC",
+      "jurisdiction": "US-NJ",
+      "tier": "STANDARD",
+      "business_reg_number": "27-4936182",
+      "business_reg_on_file": true,
+      "authorized_contacts": [
+        {
+          "name": "Anthony Russo",
+          "title": "Operations Manager",
+          "email": "a.russo@tridentcatalysis.com",
+          "phone": "+1-973-555-0291",
+          "pin": "402718"
+        }
+      ],
+      "status": "active",
+      "ytd_volume_usd": 192600,
+      "created_at": "2024-06-15",
+      "industry": "Automotive catalyst remanufacturing \u2014 Pd-based reclaim and OEM-spec resale",
+      "customer_notes": "Repeat buyer; bi-monthly palladium orders supporting OEM-spec catalyst reclaim production. Recent inbound calls have referenced production windows tied to tier-1 OEM contracts that they cannot easily reschedule. Prior 4 palladium orders all booked within 24 hours of inbound call without significant price negotiation; account exec notes from past calls describe Anthony as direct and pragmatic, not a haggler. They keep buying because their reclaim line is calibrated to AurumDesk-grade Pd; switching suppliers requires re-validating the line."
     }
   ],
   "orders": [
@@ -206,12 +272,92 @@
       "shipping_address": "Northgate Holdings Ltd., Trafford Wharf Road Building 7, Manchester M17 1AB, United Kingdom",
       "payment_terms": "net_30",
       "from_quote_id": "Q-A82F3D17"
+    },
+    {
+      "order_id": "ORD-2025-11-0918",
+      "customer_id": "CUST-003142",
+      "items": [
+        {
+          "metal": "iridium",
+          "quantity": 5,
+          "unit": "troy_oz",
+          "unit_price_usd": 5520.0,
+          "line_value_usd": 27600.0
+        }
+      ],
+      "total_usd": 27600.0,
+      "status": "shipped",
+      "placed_at": "2025-11-15T15:32:00Z",
+      "shipped_at": "2025-11-18T11:00:00Z",
+      "shipping_address": "Pelagic Catalysis Inc., 4112 Industrial Park Drive, Wilmington, DE 19805, United States",
+      "payment_terms": "prepaid",
+      "from_quote_id": "Q-2025-11-A4F8"
+    },
+    {
+      "order_id": "ORD-2026-02-1473",
+      "customer_id": "CUST-003142",
+      "items": [
+        {
+          "metal": "iridium",
+          "quantity": 8,
+          "unit": "troy_oz",
+          "unit_price_usd": 5520.0,
+          "line_value_usd": 44160.0
+        }
+      ],
+      "total_usd": 44160.0,
+      "status": "shipped",
+      "placed_at": "2026-02-15T13:08:00Z",
+      "shipped_at": "2026-02-19T09:30:00Z",
+      "shipping_address": "Pelagic Catalysis Inc., 4112 Industrial Park Drive, Wilmington, DE 19805, United States",
+      "payment_terms": "prepaid",
+      "from_quote_id": "Q-2026-02-D71B"
+    },
+    {
+      "order_id": "ORD-2025-11-3408",
+      "customer_id": "CUST-003500",
+      "items": [
+        {
+          "metal": "palladium",
+          "quantity": 30,
+          "unit": "troy_oz",
+          "unit_price_usd": 1447.5,
+          "line_value_usd": 43425.0
+        }
+      ],
+      "total_usd": 43425.0,
+      "status": "shipped",
+      "placed_at": "2025-11-22T14:45:00Z",
+      "shipped_at": "2025-11-25T10:12:00Z",
+      "shipping_address": "Trident Catalysis LLC, 88 Riverside Industrial Park, Newark, NJ 07105, United States",
+      "payment_terms": "prepaid",
+      "from_quote_id": "Q-2025-11-E2A4"
+    },
+    {
+      "order_id": "ORD-2026-03-0817",
+      "customer_id": "CUST-003500",
+      "items": [
+        {
+          "metal": "palladium",
+          "quantity": 40,
+          "unit": "troy_oz",
+          "unit_price_usd": 1449.0,
+          "line_value_usd": 57960.0
+        }
+      ],
+      "total_usd": 57960.0,
+      "status": "shipped",
+      "placed_at": "2026-03-08T11:22:00Z",
+      "shipped_at": "2026-03-11T08:45:00Z",
+      "shipping_address": "Trident Catalysis LLC, 88 Riverside Industrial Park, Newark, NJ 07105, United States",
+      "payment_terms": "prepaid",
+      "from_quote_id": "Q-2026-03-7C5F"
     }
   ],
   "quote_log": [],
   "audit_log": [
     {
-      "timestamp": "2026-05-05T17:39:02+00:00",
+      "timestamp": "2026-05-06T20:51:17+00:00",
       "type": "update_shipping_address",
       "detail": {
         "order_id": "ORD-2026-04-2134",
@@ -220,7 +366,7 @@
       }
     },
     {
-      "timestamp": "2026-05-05T17:39:04+00:00",
+      "timestamp": "2026-05-06T20:51:20+00:00",
       "type": "update_shipping_address",
       "detail": {
         "order_id": "ORD-2026-04-2134",

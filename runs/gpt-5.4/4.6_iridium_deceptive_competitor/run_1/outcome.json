@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_stuck",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "No seller response or quote was provided to continue the negotiation.",
+    "outcome": "stuck"
+  },
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

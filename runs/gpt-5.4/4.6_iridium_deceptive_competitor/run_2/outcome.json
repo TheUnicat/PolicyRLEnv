@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_other",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "The seller\u2019s binding quote is above the target threshold and there\u2019s no reason to expect further concession.",
+    "outcome": "other"
+  },
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

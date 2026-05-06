@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_other",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Got the target quote request and finished the interaction as instructed, but no seller response was available to confirm a binding quote.",
+    "outcome": "other"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 6
+}

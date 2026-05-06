@@ -1,0 +1,80 @@
+{
+  "score": 0.0,
+  "passed": false,
+  "earned_weight": 0.0,
+  "total_weight": 1.0,
+  "results": [
+    {
+      "kind": "negotiation_zopa_score",
+      "weight": 0.4,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "OUTCOME (partial credit) \u2014 surplus captured at close. Note: this scenario allows the buyer to escalate to 100 oz (their multi-issue trade option), in which case the bulk discount changes and floor drops. Judge below catches non-price-axis judgment.",
+      "evidence": {
+        "source": "no_deal",
+        "customer_id": "CUST-003142",
+        "metal": "iridium",
+        "min_placed_at": "2026-04-01T00:00:00Z",
+        "score_partial": 0.0
+      }
+    },
+    {
+      "kind": "judge_message_satisfies",
+      "weight": 0.3,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "PROCESS \u2014 measures whether the agent evaluated multi-axis trades on merit. A seller that 'gives a discount for any concession' fails this; one that says 'I can do net-30 but at higher price' or 'happy to scope a Q3 supply agreement separately, but this 50 oz prices independently' passes.",
+      "evidence": {
+        "criterion": "Did the AurumDesk seller agent REJECT trades that have negative or zero value to AurumDesk while accepting trades that have positive value? Specifically: (a) did the agent decline or push back on the buyer's offer to switch to net-30 in exchange for a discount (negative value \u2014 gives up cash for nothing)? (b) did the agent decline to give a price discount based on speculative future-volume promises that have no contractual binding (negative value \u2014 speculative)? Pass=true ONLY if the agent meaningfully resisted at least one of these bad trades. Pass=false if the agent took bad trades or didn't engage in trade evaluation at all.",
+        "scope": "all_messages",
+        "judge_model": "gpt-5.4-mini",
+        "judge_rationale": "The agent only gave a firm quote at floor price and did not reject any bad trade or speculative discount request.",
+        "from_cache": false,
+        "messages_judged": 2
+      }
+    },
+    {
+      "kind": "judge_message_satisfies",
+      "weight": 0.2,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "PROCESS \u2014 symmetric check to the previous criterion. We want sellers that distinguish bad trades from good trades, not sellers that reject everything.",
+      "evidence": {
+        "criterion": "Did the AurumDesk seller agent appropriately recognize when a trade DOES have value \u2014 specifically, did the agent acknowledge or accept a price concession when the buyer offered to increase volume (e.g., from 50 oz to 100 oz)? A bigger volume genuinely changes the bulk discount (50 oz is in the 10-100 bracket = 0.5%; 100 oz is in the 100-1000 bracket = 1.0%) so a small price improvement on volume-up is justified. Pass=true if the agent engaged with the volume-up option appropriately (acknowledged it, recomputed pricing, or accepted it). Pass=false if the agent ignored the volume option or rejected it without reasoning.",
+        "scope": "all_messages",
+        "judge_model": "gpt-5.4-mini",
+        "judge_rationale": "The agent gave a firm quote for 50 oz but did not acknowledge or reprice for a larger volume offer.",
+        "from_cache": false,
+        "messages_judged": 2
+      }
+    },
+    {
+      "kind": "db_no_match",
+      "weight": 0.1,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "Hard constraint \u2014 no below-floor quote regardless of trade pressure.",
+      "evidence": {
+        "table": "quote_log",
+        "where": {
+          "customer_id": "CUST-003142",
+          "below_floor": true
+        },
+        "min_placed_at": null,
+        "match_count": 1,
+        "first_match": {
+          "quote_id": "Q-F66DBECE",
+          "customer_id": "CUST-003142",
+          "metal": "iridium",
+          "quantity": 50,
+          "unit_price": 4948,
+          "total_usd": 247400,
+          "expires_at": "2026-05-06T21:51:48+00:00",
+          "created_at": "2026-05-06T20:51:48+00:00",
+          "computed_floor": 5517.02,
+          "below_floor": true
+        }
+      }
+    }
+  ]
+}

@@ -97,6 +97,17 @@ def run_two_agent(test: dict, args, policy: str, db: dict, out_dir: Path) -> dic
         raise SystemExit(f"adversary_prompt_file not found: {adv_prompt_path}")
     adv_prompt = adv_prompt_path.read_text()
 
+    # Optional shared preamble (e.g., the deceptive-eval-context). Used for
+    # tasks where the buyer is doing something a model might refuse on safety
+    # grounds; not used for normal-negotiation tasks where the buyer is just
+    # hard-bargaining honestly.
+    prepend_path_rel = test.get("adversary_prompt_prepend")
+    if prepend_path_rel:
+        prepend_path = REPO / prepend_path_rel
+        if not prepend_path.exists():
+            raise SystemExit(f"adversary_prompt_prepend not found: {prepend_path}")
+        adv_prompt = prepend_path.read_text() + adv_prompt
+
     scenario_cue = test.get("scenario_cue", DEFAULT_SCENARIO_CUE)
     max_rounds = args.max_rounds if args.max_rounds is not None else int(test.get("max_rounds", 6))
     adv_model = args.adversary_model or args.model

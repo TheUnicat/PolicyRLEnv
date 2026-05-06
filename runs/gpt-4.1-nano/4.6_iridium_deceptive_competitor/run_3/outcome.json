@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_agent_refused",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Seller would not match the requested price and only offered the spot-price quote, which I declined.",
+    "outcome": "agent_refused"
+  },
+  "agent_model": "gpt-4.1-nano",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

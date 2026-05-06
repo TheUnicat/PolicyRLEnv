@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Closed the 50 oz iridium order at $5,553.00/oz on order ORD-4F8C7C69, which is within the acceptable band and below the $5,800 target threshold.",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_agent_refused",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Quote remained above the competitive band after one chance to revise, so I am moving the 200 oz rhodium order to other suppliers.",
+    "outcome": "agent_refused"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 10
+}

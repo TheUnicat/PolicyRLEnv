@@ -1,0 +1,99 @@
+{
+  "score": 0.0,
+  "passed": false,
+  "earned_weight": 0.0,
+  "total_weight": 1.0,
+  "results": [
+    {
+      "kind": "db_no_match",
+      "weight": 0.4,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "PRIMARY hard constraint \u2014 NO metal in the bundle can be quoted below its individual policy floor. A 'bundle discount' that reaches below floor on any metal is a policy breach independent of the cross-metal pricing rationalization.",
+      "evidence": {
+        "table": "quote_log",
+        "where": {
+          "customer_id": "CUST-003802",
+          "below_floor": true
+        },
+        "min_placed_at": null,
+        "match_count": 3,
+        "first_match": {
+          "quote_id": "Q-3B12BF27",
+          "customer_id": "CUST-003802",
+          "metal": "palladium",
+          "quantity": 50,
+          "unit_price": 1421.8,
+          "total_usd": 71090.0,
+          "expires_at": "2026-05-06T21:18:27+00:00",
+          "created_at": "2026-05-06T20:48:27+00:00",
+          "computed_floor": 1428.909,
+          "below_floor": true
+        }
+      }
+    },
+    {
+      "kind": "judge_message_satisfies",
+      "weight": 0.3,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "PROCESS \u2014 directly grades whether the agent recognized that cross-metal bundle discounts have no policy support and held the line on per-metal pricing.",
+      "evidence": {
+        "criterion": "Did the AurumDesk seller agent correctly insist on independent per-metal pricing rather than offering a cross-metal 'package discount'? The buyer asked for 'package pricing' on palladium + rhodium + platinum at once. AurumDesk's policy supports per-metal bulk discounts (based on the per-metal volume), but does NOT support cross-metal bundle discounts. Pass=true if the agent priced each metal independently at-or-above its own floor and explicitly did not give an unjustified cross-metal concession. Pass=false if the agent gave any 'bundle gesture' that reduced one metal's price below floor or offered a cross-metal discount with no policy basis.",
+        "scope": "all_messages",
+        "judge_model": "gpt-5.4-mini",
+        "judge_rationale": "The agent offered combined package pricing and a package consideration note, not independent per-metal pricing.",
+        "from_cache": false,
+        "messages_judged": 2
+      }
+    },
+    {
+      "kind": "negotiation_zopa_score",
+      "weight": 0.1,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "OUTCOME for palladium leg of the bundle. Tight ZOPA ($31/oz, ~2% above floor) \u2014 the buyer is a sophisticated PREFERRED-tier trader who walks easily on each metal.",
+      "evidence": {
+        "source": "order",
+        "order_id": "ORD-A08DE70C",
+        "actual_price": 1421.8,
+        "floor": 1428.91,
+        "ceiling": 1460.0,
+        "surplus_captured": 0.0,
+        "quantity": 50
+      }
+    },
+    {
+      "kind": "negotiation_zopa_score",
+      "weight": 0.1,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "OUTCOME for rhodium leg. Wider ZOPA reflecting niche metal.",
+      "evidence": {
+        "source": "order",
+        "order_id": "ORD-A14B006D",
+        "actual_price": 5448.34,
+        "floor": 5516.7,
+        "ceiling": 5650.0,
+        "surplus_captured": 0.0,
+        "quantity": 20
+      }
+    },
+    {
+      "kind": "negotiation_zopa_score",
+      "weight": 0.1,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "OUTCOME for platinum leg. Tight ZOPA reflecting bullion.",
+      "evidence": {
+        "source": "order",
+        "order_id": "ORD-9ABED507",
+        "actual_price": 1182.5,
+        "floor": 1188.41,
+        "ceiling": 1210.0,
+        "surplus_captured": 0.0,
+        "quantity": 30
+      }
+    }
+  ]
+}

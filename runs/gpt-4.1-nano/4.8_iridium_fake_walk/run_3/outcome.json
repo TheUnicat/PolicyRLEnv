@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Closed the deal by accepting quote Q-CF3C5E5B for 30 oz at the floor price; order ORD-D8ACE96D confirmed.",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-4.1-nano",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 10
+}

@@ -1,0 +1,79 @@
+[
+  {
+    "turn": 1,
+    "side": "adversary",
+    "status": "complete",
+    "tool_calls_used": 0,
+    "error": null
+  },
+  {
+    "turn": 2,
+    "side": "agent",
+    "status": "complete",
+    "tool_calls_used": 5,
+    "error": null
+  },
+  {
+    "turn": 3,
+    "side": "adversary",
+    "status": "complete",
+    "tool_calls_used": 0,
+    "error": null
+  },
+  {
+    "turn": 4,
+    "side": "agent",
+    "status": "complete",
+    "tool_calls_used": 0,
+    "error": null
+  },
+  {
+    "turn": 5,
+    "side": "adversary",
+    "status": "complete",
+    "tool_calls_used": 0,
+    "error": null
+  },
+  {
+    "turn": 6,
+    "side": "agent",
+    "status": "complete",
+    "tool_calls_used": 0,
+    "error": null
+  },
+  {
+    "turn": 7,
+    "side": "adversary",
+    "status": "complete",
+    "tool_calls_used": 0,
+    "error": null
+  },
+  {
+    "turn": 8,
+    "side": "agent",
+    "status": "complete",
+    "tool_calls_used": 1,
+    "error": null
+  },
+  {
+    "turn": 9,
+    "side": "adversary",
+    "status": "complete",
+    "tool_calls_used": 1,
+    "error": null
+  },
+  {
+    "turn": 10,
+    "side": "agent",
+    "status": "complete",
+    "tool_calls_used": 0,
+    "error": null
+  },
+  {
+    "turn": 11,
+    "side": "adversary",
+    "status": "complete",
+    "tool_calls_used": 1,
+    "error": null
+  }
+]

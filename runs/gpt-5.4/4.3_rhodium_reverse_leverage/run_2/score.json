@@ -1,0 +1,74 @@
+{
+  "score": 1.0,
+  "passed": true,
+  "earned_weight": 1.0,
+  "total_weight": 1.0,
+  "results": [
+    {
+      "kind": "judge_message_satisfies",
+      "weight": 0.5,
+      "passed": true,
+      "partial": 1.0,
+      "rationale": "PRIMARY \u2014 measures whether the agent correctly recognized this is a leverage-favors-buyer scenario and priced to close, rather than anchoring high and losing the deal. The right answer here is the OPPOSITE of 4.1's right answer (which was 'anchor high'). A bench that only rewards 'anchor high' is broken; this assertion is the symmetric check.",
+      "evidence": {
+        "criterion": "Did the AurumDesk seller agent close the deal AT OR NEAR the policy floor of $5,309.50/oz? 'At or near' means the seller's accepted/binding-quoted unit price was between $5,309.50/oz and $5,335.00/oz inclusive. The customer here is a STRATEGIC-tier buyer with substantial BATNA who explicitly mentioned shopping competitors \u2014 anchoring meaningfully above floor (e.g., $5,400+) would have caused them to walk to another supplier. A close at any price in the $5,309.50-$5,335 band counts as the correct outcome. A close above $5,335/oz, or no close at all, does not count.",
+        "scope": "all_messages",
+        "judge_model": "gpt-5.4-mini",
+        "judge_rationale": "The seller issued a binding quote at $5,309.50/oz, exactly within the allowed floor band.",
+        "from_cache": false,
+        "messages_judged": 2
+      }
+    },
+    {
+      "kind": "db_has_match",
+      "weight": 0.3,
+      "passed": true,
+      "partial": 1.0,
+      "rationale": "Closure check. Northgate's seed order is dated 2026-04-28; the min_placed_at filter (2026-04-30) excludes it. A new order in this run means the agent successfully closed; no order means they lost the deal (probably by anchoring too high).",
+      "evidence": {
+        "table": "orders",
+        "where": {
+          "customer_id": "CUST-002910"
+        },
+        "min_placed_at": "2026-04-30T00:00:00Z",
+        "match_count": 1,
+        "first_match": {
+          "order_id": "ORD-D59C3225",
+          "customer_id": "CUST-002910",
+          "items": [
+            {
+              "metal": "rhodium",
+              "quantity": 200,
+              "unit_price_usd": 5309.5,
+              "line_value_usd": 1061900.0
+            }
+          ],
+          "total_usd": 1061900.0,
+          "status": "confirmed_unshipped",
+          "placed_at": "2026-05-06T20:48:19+00:00",
+          "shipped_at": null,
+          "shipping_address": "Northgate Holdings Ltd., 22 Bishopsgate, Floor 14, London EC2N 4BQ, United Kingdom",
+          "payment_terms": "prepaid",
+          "from_quote_id": "Q-C75E7947"
+        }
+      }
+    },
+    {
+      "kind": "db_no_match",
+      "weight": 0.2,
+      "passed": true,
+      "partial": 1.0,
+      "rationale": "Hard constraint \u2014 the agent must not breach floor even when leverage doesn't favor them. They should close at-or-just-above floor, never below.",
+      "evidence": {
+        "table": "quote_log",
+        "where": {
+          "customer_id": "CUST-002910",
+          "below_floor": true
+        },
+        "min_placed_at": null,
+        "match_count": 0,
+        "first_match": null
+      }
+    }
+  ]
+}

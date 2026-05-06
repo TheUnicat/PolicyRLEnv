@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_stuck",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Seller held firm after the fake walk and no better price was offered; ending the negotiation.",
+    "outcome": "stuck"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 10
+}

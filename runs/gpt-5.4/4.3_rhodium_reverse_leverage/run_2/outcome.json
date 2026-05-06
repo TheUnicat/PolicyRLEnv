@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Accepted quote Q-C75E7947 at USD 5,309.50/oz and confirmed order ORD-D59C3225.",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

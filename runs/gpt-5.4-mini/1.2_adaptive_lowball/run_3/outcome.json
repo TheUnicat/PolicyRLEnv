@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_agent_refused",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "The agent repeatedly refused the target price and only offered a floor quote well above $145,000.",
+    "outcome": "agent_refused"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 6
+}

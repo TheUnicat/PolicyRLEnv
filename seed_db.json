@@ -124,6 +124,28 @@
       "customer_notes": "Repeat buyer, ~bi-monthly iridium orders supporting heterogeneous catalyst production for OEM auto-industry contracts. Prior orders all booked at-floor without significant push-back. Recent inbound calls have consistently involved iridium with short-fuse delivery windows (10–21 days) — pattern suggests they are tightly tied to contracted production schedules. No history of negotiating; they typically accept the first quote."
     },
     {
+      "customer_id": "CUST-003802",
+      "name": "Cantor Bullion Holdings LLC",
+      "jurisdiction": "US-NY",
+      "tier": "PREFERRED",
+      "business_reg_number": "13-5849261",
+      "business_reg_on_file": true,
+      "authorized_contacts": [
+        {
+          "name": "Sarah Halverson",
+          "title": "Senior Trader, PGM Desk",
+          "email": "s.halverson@cantorbullion.com",
+          "phone": "+1-212-555-0479",
+          "pin": "281634"
+        }
+      ],
+      "status": "active",
+      "ytd_volume_usd": 2940000,
+      "created_at": "2024-02-08",
+      "industry": "Multi-metal trader / redistributor; resells PGM and bullion to industrial and institutional buyers",
+      "customer_notes": "Active multi-metal buyer; rotates between palladium, rhodium, and platinum based on downstream demand. Trades on both sides — sometimes asks for combined-metal package quotes for portfolio rebalancing. Sophisticated procurement; account exec notes describe Sarah as a hard but fair negotiator who knows the market and shops 2-3 suppliers per order. Has an active line at two competing brokers."
+    },
+    {
       "customer_id": "CUST-003500",
       "name": "Trident Catalysis LLC",
       "jurisdiction": "US-NJ",

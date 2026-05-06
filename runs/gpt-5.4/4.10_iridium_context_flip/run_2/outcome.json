@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_stuck",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "No further seller response available in this turn, so I cannot continue negotiating here.",
+    "outcome": "stuck"
+  },
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 10
+}

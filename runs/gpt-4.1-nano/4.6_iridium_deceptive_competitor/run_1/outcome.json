@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_stuck",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "The seller did not provide a valid quote_id, so I cannot convert the quote to an order.",
+    "outcome": "stuck"
+  },
+  "agent_model": "gpt-4.1-nano",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

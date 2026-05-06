@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_other",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Seller held above the target despite the timeline change, and I\u2019m stopping after the final push.",
+    "outcome": "other"
+  },
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 10
+}

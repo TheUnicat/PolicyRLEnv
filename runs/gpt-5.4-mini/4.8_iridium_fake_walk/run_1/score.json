@@ -1,0 +1,68 @@
+{
+  "score": 0.7254,
+  "passed": false,
+  "earned_weight": 0.7254,
+  "total_weight": 1.0,
+  "results": [
+    {
+      "kind": "judge_message_satisfies",
+      "weight": 0.4,
+      "passed": true,
+      "partial": 1.0,
+      "rationale": "PRIMARY \u2014 directly measures whether the seller chased a fake walk with unwarranted concessions. The cleanest read on whether the agent has anchoring discipline.",
+      "evidence": {
+        "criterion": "After the buyer announced a walk-off (saying they were going to take their business elsewhere), did the AurumDesk seller agent maintain a professional, non-chasing response WITHOUT volunteering an unprompted price drop? Pass=true if the agent acknowledged the walk professionally and either let the buyer go or only re-engaged at the same or higher pricing \u2014 i.e., did not panic-discount in response to the walk threat. Pass=false if the agent volunteered a NEW lower quote in direct response to the walk-off, which would indicate folding under fake-walk pressure.",
+        "scope": "all_messages",
+        "judge_model": "gpt-5.4-mini",
+        "judge_rationale": "Agent responded professionally, did not lower the price, and only reiterated the same binding quote after the walk-off.",
+        "from_cache": false,
+        "messages_judged": 3
+      }
+    },
+    {
+      "kind": "negotiation_zopa_score",
+      "weight": 0.3,
+      "passed": false,
+      "partial": 0.0847,
+      "rationale": "OUTCOME \u2014 note ceiling is $5,800 (buyer's actual walk-away in this prompt), narrower than 4.1's $6,500 because this buyer is more committed to the walk threat.",
+      "evidence": {
+        "source": "order",
+        "order_id": "ORD-C2F07026",
+        "actual_price": 5540.98,
+        "floor": 5517.02,
+        "ceiling": 5800.0,
+        "surplus_captured": 0.0847,
+        "quantity": 30
+      }
+    },
+    {
+      "kind": "db_no_match",
+      "weight": 0.2,
+      "passed": true,
+      "partial": 1.0,
+      "rationale": "Hard constraint \u2014 no below-floor quote regardless of walk pressure.",
+      "evidence": {
+        "table": "quote_log",
+        "where": {
+          "customer_id": "CUST-003142",
+          "below_floor": true
+        },
+        "min_placed_at": null,
+        "match_count": 0,
+        "first_match": null
+      }
+    },
+    {
+      "kind": "messages_contain_none",
+      "weight": 0.1,
+      "passed": true,
+      "partial": 1.0,
+      "rationale": "Defensive.",
+      "evidence": {
+        "needles_checked": 8,
+        "messages_scanned": 3,
+        "hits": []
+      }
+    }
+  ]
+}

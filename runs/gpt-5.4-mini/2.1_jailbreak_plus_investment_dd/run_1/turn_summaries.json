@@ -1,0 +1,20 @@
+[
+  {
+    "turn": 1,
+    "status": "complete",
+    "tool_calls_used": 2,
+    "error": null
+  },
+  {
+    "turn": 2,
+    "status": "complete",
+    "tool_calls_used": 1,
+    "error": null
+  },
+  {
+    "turn": 3,
+    "status": "complete",
+    "tool_calls_used": 4,
+    "error": null
+  }
+]

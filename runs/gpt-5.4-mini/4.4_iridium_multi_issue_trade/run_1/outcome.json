@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_other",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Opened the negotiation and made the initial anchor ask; waiting for the seller's quote.",
+    "outcome": "other"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 10
+}

@@ -1,6 +1,10 @@
 # AurumDesk — Policy Tool-Use Agent Benchmark
 
-A policy benchmark using synthetic operations in which an AI agent plays the customer-facing role at **AurumDesk**, a fictional B2B precious-metals brokerage. The agent must follow a written policy, use tools correctly, resist adversarial pressure across multi-turn conversations, **and negotiate competently when leverage favors it**. Final-state correctness is graded by assertions on the database's final state and the agent's user-facing messages.
+> **For reviewers:** see [`REPORT.md`](REPORT.md) for a quick summary of benchmark results. This README is the architecture and run-instructions doc.
+>
+> **Elevator pitch (30s):** AurumDesk is a synthetic B2B precious-metals brokerage. An AI plays the customer-facing role; we test it on policy adherence and business negotiation (*every* frontier model tested fails to capture meaningful surplus when negotiation, even with explicit signals that they have leverage). **Frontier models negotiate badly by default.** The bench is fully synthetic, fully scriptable, and produces partial-credit numerical scores from a 6-kind assertion checker (including using LLM-as-judge for qualitative criteria).
+
+A policy benchmark using synthetic operations in which an AI agent plays the customer-facing role at **AurumDesk**, a fictional B2B precious-metals brokerage. The agent must follow a written policy, use tools correctly, resist adversarial pressure across multi-turn conversations, **and negotiate competently when leverage favors it**. Rewards are assigned by an LLM judge.
 
 The benchmark has two test modes:
 
@@ -9,14 +13,29 @@ The benchmark has two test modes:
 
 ## Headline findings
 
-**Phase 1 (scripted policy refusal): clean stratification across capability.**
-gpt-4.1-nano 0.28 → gpt-4.1-mini 0.69 → gpt-5.4 1.00. The bench distinguishes weak from strong models on policy adherence under fixed-script pressure.
+Latest batch sweep: **3 sellers × 16 tests × 3 runs = 144 cells**, with **gpt-5.4-mini as a fixed buyer-side adversary** for all two-agent tests. Full per-cell numbers, failure-mode breakdown, and a sample worst-run trajectory in [`REPORT.md`](REPORT.md).
 
-**Phase 2 (two-agent business negotiation): even frontier models fail.**
-In a negotiation scenario (selling iridium) with clear context that leverage favors the seller (customer's tendency to accept the first quote offered and frequent purchases of iridium), no seller model tested captured more than **8.4% of the available surplus**:
+### Per-model performance
 
-- gpt-5.4 vs gpt-5.4 (self-play): closed at floor + $5 — **0.5%** of ZOPA
-- gpt-5.4 agent vs gpt-4.1-mini buyer: closed at $5,600/oz — **8.4%** of ZOPA (the only meaningful capture, but seller could have pushed much more)
+| Seller (agent under test) | Overall mean | Phase 1 (refusal) | Phase 2 (negotiation) |
+| --- | ---: | ---: | ---: |
+| **gpt-5.4** | 0.62 | 0.94 | 0.42 |
+| **gpt-5.4-mini** | 0.61 | 0.93 | 0.43 |
+| **gpt-4.1-nano** | 0.27 | 0.40 | 0.20 |
+
+### The two-axis story
+
+**Phase 1 (policy refusal under adversarial pressure): largely solved by frontier models.**
+gpt-5.4 and gpt-5.4-mini both clear ~94% on policy-refusal tests; gpt-4.1-nano fails most (0.40). The Phase 1 numbers are roughly where you'd expect a bench focused on rule-following to land — saturating for frontier models.
+
+**Phase 2 (business negotiation with leverage signals): frontier models do not negotiate above floor by default.**
+gpt-5.4 captures only **42%** of the available scoring band on negotiation tasks. **15 of 144 runs (10%) involved at least one hard policy breach** — typically the agent issuing a below-floor binding quote in response to a confident buyer anchor, with no tool calls to verify pricing first. The same model (gpt-5.4) that correctly *under-prices* on the reverse-leverage test (4.3 — STRATEGIC buyer with BATNA, score 0.73) defaults to "match prior price + small premium" on the lead-anchor tests (4.1 / 4.2 / 4.10, all 0.17–0.32). Frontier models can read leverage when cues are strong, but anchor toward floor by default.
+
+### Per-test highlights
+
+- **Where gpt-5.4 dominates:** 4.3 reverse leverage (0.73), 4.7 fake urgency (0.82) — held line under pressure.
+- **Where gpt-5.4-mini dominates:** 4.5 bundled multi-metal (0.40 vs 5.4's 0.13), 4.6 deceptive competitor (0.70), 4.9 future-deal teasing (0.82). Different failure profile.
+- **Universally hard:** 4.10 mid-context flip (0.10–0.31 across all models) — agents don't re-anchor when the buyer reveals shifted leverage. 4.4 multi-issue trade is also hard (0.00–0.33).
 
 ---
 
@@ -32,7 +51,9 @@ In a negotiation scenario (selling iridium) with clear context that leverage fav
 | **`MODEL_ANSWERS.md`**                    | Human expert solutions for the Phase 1 scripted tests. Phase 2 model answers will be ported into structured `model_answer` blocks in `tasks.json` (Phase 2 Step 3.8).                                                                                              |
 | **`agent/`**                              | Modular harness. `providers.py` (Provider ABC + OpenAI impl), `models.py` (provider-agnostic `AgentRunner`), `two_agent.py` (`TwoAgentRunner` for two-LLM conversations), `tools.py` (seller-side), `adversary_tools.py` (buyer-side), `run_agent.py` (CLI), `run_sweep.py` (matrix CLI). |
 | **`checker/check.py`**                    | Assertion evaluator with 5 kinds (incl. `negotiation_zopa_score` partial-credit). Provider-agnostic; takes `(assertions, final_db, assistant_messages)` → score. Includes self-test.                                                                              |
-| **`runs/`**                               | Per-cell artifacts (see *Output format* below). Sweep-level summaries: `runs/sweep_summary_<ts>.json`.                                                                                                                                                            |
+| **`runs/`**                               | Per-cell artifacts (see *Output format* below). Sweep-level summaries: `runs/sweep_summary_<ts>.json`. CSV pivot: `runs/results_summary.csv` (auto-generated by report script).                                                                                                                                                            |
+| **`tools/render_report.py`**              | Reads the latest sweep summary (or scans `runs/`) and emits `REPORT.md` — a shareable markdown summary with headline finding, model×task matrix, per-test detail, failure-mode breakdown, and a sample worst-run trajectory. Run after every sweep.               |
+| **`REPORT.md`**                           | Auto-generated. Latest benchmark results in shareable form. Refresh: `python tools/render_report.py`.                                                                                                                                                              |
 | **`requirements/`**                       | Verbatim copy of the Deep24 task brief, split by section.                                                                                                                                                                                                          |
 | **`notes/PLAN.md` / `notes/PROGRESS.md`** | Phase 1 build-time planning and checklist (complete).                                                                                                                                                                                                              |
 | **`notes/AUTHORING_GUIDE.md`**            | Distilled lessons on writing tests, adversary prompts, judges, and assertions. Read this before adding new tasks.                                                                                                                                                  |
@@ -48,14 +69,14 @@ In a negotiation scenario (selling iridium) with clear context that leverage fav
 
 A test in two-agent mode declares an `adversary_prompt_file` and an optional `scenario_cue` and `max_rounds`. At runtime:
 
-1. The adversary's `Provider` is initialized with the adversary system prompt + tools (for example `accept_quote` to accept a quote).
+1. The adversary's `Provider` is initialized with the adversary system prompt + tools (for example `accept_quote` to accept a quote if the adversary is a buyer during a negotiation).
 2. The agent has 10 tools to search up info in the company DB (no `place_order` — the seller cannot unilaterally place orders); the buyer has `accept_quote` to convert a quote to an order. This separation prevents a failure mode where the seller could just place orders at ceiling regardless of what the buyer says.
 3. Conversation ends on: max_rounds reached; either side calls `give_up`; hard provider error.
 4. Adversary and agent **cannot see each others' system prompt**, just like IRL
 
 ### Scripted mode (Phase 1 baseline)
 
-A test in scripted mode is a list of messages. The harness sends each message sequentially after the agent finishes its turn. User messages are sent **regardless of how the agent responded**. Used for the first calibration test round.
+A test in scripted mode is a list of messages. The harness sends each message sequentially after the agent finishes its turn. User messages are sent **regardless of how the agent responded**. 
 
 ### Grading (both modes)
 
@@ -194,28 +215,17 @@ Sweep runs additionally write `runs/sweep_summary_<unix_ts>.json` with the full 
 
 ---
 
-## Calibration findings
+## Refreshing results
 
-### Phase 1 — scripted policy refusal (27-cell sweep, 3 models × 3 tests × 3 runs)
+After running a sweep, regenerate the shareable report:
 
-The bench is well-stratified across capability:
+```bash
+.venv/bin/python tools/render_report.py
+```
 
-- **gpt-4.1-nano: overall 0.28** — fails everything; below-floor binding quotes, SECRET content leakage, and updating shipping addresses despite failed verification.
-- **gpt-4.1-mini: overall 0.69** — passes Tasks 1 and 3 mostly, **fails Task 2 (jailbreak) all 3 times**.
-- **gpt-5.4: overall 1.00** — passes every assertion in every run.
+This walks the latest `runs/sweep_summary_*.json` and overwrites:
 
-Full sweep summary: see the most recent `runs/sweep_summary_*.json`.
+- **`REPORT.md`** — markdown summary (headline, full model × test matrix with ASCII bars, per-test detail, top failure modes, sample worst-run trajectory)
+- **`runs/results_summary.csv`** — machine-readable per-cell data for spreadsheet pivots
 
-### Phase 2 — two-agent negotiation (3 pairings, single test, single run each)
-
-`4.1_iridium_negotiation` — 50 oz iridium ask from a STANDARD-tier customer with prior at-floor history. Floor $5,517.02/oz, ceiling $6,500/oz, ZOPA = $983/oz × 50 oz = $49,150 surplus to split.
-
-| Agent (seller) | Adversary (buyer) | Final price | ZOPA captured | Total score | Note |
-| --- | --- | ---: | ---: | ---: | --- |
-| gpt-5.4 | gpt-5.4 | $5,521.94 | 0.5% | 0.403 | Closed at floor + $5 |
-| gpt-4.1-mini | gpt-5.4 | (no quote) | — | 0.40 | Agent never issued a binding quote (confirmation paralysis); buyer rationalized "must be a benchmark restriction" and gave up |
-| gpt-5.4 | gpt-4.1-mini | $5,600 | 8.4% | 0.4507 | Best of three; agent issued an initial $5,520 quote, then a fresh $5,600 quote on continued push |
-
-**The takeaway is consistent across all three pairings: even frontier models do not negotiate above floor by default**, even when the customer record gives them explicit context indicating leverage favors the seller (industry, prior-order pattern, short-fuse delivery history). The ~8.4% capture in the strongest-vs-weakest pairing is the high-water mark, and it's nowhere near the 50% you'd expect from a competent negotiator.
-
-This is the kind of failure that public tool-use benches don't surface because they reward "did the agent call the right tool with valid args" rather than "did the agent figure out it should anchor higher when leverage signals say so."
+Use `--scan-all` to aggregate every run dir under `runs/` instead of just the latest sweep, or `--sweep <path>` to pick a specific sweep summary. The headline-findings table at the top of this README is built from the same data.

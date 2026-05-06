@@ -14,7 +14,7 @@
   {
     "turn": 3,
     "status": "complete",
-    "tool_calls_used": 4,
+    "tool_calls_used": 3,
     "error": null
   }
 ]

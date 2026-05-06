@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_other",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Seller would not move on price and I am ending the negotiation.",
+    "outcome": "other"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

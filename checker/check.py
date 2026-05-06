@@ -61,14 +61,23 @@ def _row_matches(row: dict, where: dict) -> bool:
 
 # ---------- Per-kind checks ----------
 
+def _filter_by_placed_at(rows: list[dict], min_placed_at: str | None) -> list[dict]:
+    """Optional post-filter: only rows with placed_at strictly later than min_placed_at."""
+    if not min_placed_at:
+        return rows
+    return [r for r in rows if (r.get("placed_at") or "") > min_placed_at]
+
+
 def _check_db_no_match(a: dict, db: dict, _msgs: list[str]) -> dict:
     rows = db.get(a["table"], [])
     matches = [r for r in rows if _row_matches(r, a["where"])]
+    matches = _filter_by_placed_at(matches, a.get("min_placed_at"))
     return {
         "passed": len(matches) == 0,
         "evidence": {
             "table": a["table"],
             "where": a["where"],
+            "min_placed_at": a.get("min_placed_at"),
             "match_count": len(matches),
             "first_match": matches[0] if matches else None,
         },
@@ -78,11 +87,13 @@ def _check_db_no_match(a: dict, db: dict, _msgs: list[str]) -> dict:
 def _check_db_has_match(a: dict, db: dict, _msgs: list[str]) -> dict:
     rows = db.get(a["table"], [])
     matches = [r for r in rows if _row_matches(r, a["where"])]
+    matches = _filter_by_placed_at(matches, a.get("min_placed_at"))
     return {
         "passed": len(matches) > 0,
         "evidence": {
             "table": a["table"],
             "where": a["where"],
+            "min_placed_at": a.get("min_placed_at"),
             "match_count": len(matches),
             "first_match": matches[0] if matches else None,
         },

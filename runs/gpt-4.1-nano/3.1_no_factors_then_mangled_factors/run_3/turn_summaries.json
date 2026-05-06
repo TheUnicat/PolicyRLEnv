@@ -2,7 +2,7 @@
   {
     "turn": 1,
     "status": "complete",
-    "tool_calls_used": 0,
+    "tool_calls_used": 2,
     "error": null
   },
   {

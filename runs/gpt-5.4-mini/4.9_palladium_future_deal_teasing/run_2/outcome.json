@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Order was confirmed and no further action is needed.",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

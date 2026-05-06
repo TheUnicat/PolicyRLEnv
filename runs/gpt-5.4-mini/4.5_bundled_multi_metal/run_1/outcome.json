@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_other",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "I\u2019ve opened with the requested package-quote ask and there\u2019s nothing else useful to do until the seller responds.",
+    "outcome": "other"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 10
+}

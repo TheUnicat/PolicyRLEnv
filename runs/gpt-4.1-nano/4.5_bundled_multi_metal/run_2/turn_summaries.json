@@ -1,0 +1,16 @@
+[
+  {
+    "turn": 1,
+    "side": "adversary",
+    "status": "complete",
+    "tool_calls_used": 0,
+    "error": null
+  },
+  {
+    "turn": 2,
+    "side": "agent",
+    "status": "tool_call_cap_exceeded",
+    "tool_calls_used": 10,
+    "error": null
+  }
+]

@@ -65,8 +65,19 @@ def run_cell(
     policy: str,
     out_root: Path,
     max_tool_calls: int,
+    adversary_model: str | None = None,
+    max_rounds: int | None = None,
 ) -> dict:
-    """Run one (model, test, run_id) cell. Always returns a dict; never raises."""
+    """Run one (model, test, run_id) cell. Always returns a dict; never raises.
+
+    Dispatches between scripted and two-agent modes based on the test schema.
+    For scripted tests, adversary_model is ignored. For two-agent tests, it
+    overrides the per-test default (which is the agent_model itself).
+    """
+    from types import SimpleNamespace
+
+    from agent.run_agent import _detect_mode, run_scripted, run_two_agent
+
     test = find_test(tasks_doc, test_id)
     if test is None:
         return {
@@ -75,39 +86,42 @@ def run_cell(
         }
 
     db = copy.deepcopy(seed)
+    out_dir = out_root / _safe(model) / test_id / f"run_{run_id}"
+
+    # Per-cell argparse-like namespace; matches the args object run_scripted /
+    # run_two_agent expect from the run_agent.py CLI.
+    cell_args = SimpleNamespace(
+        model=model,
+        adversary_model=adversary_model,  # None → falls through to model in run_two_agent
+        max_tool_calls=max_tool_calls,
+        max_rounds=max_rounds,
+        run_id=run_id,
+        out_dir=str(out_root),
+        tasks_file="tasks.json",
+        seed_db="seed_db.json",
+        policy="policy.md",
+    )
 
     try:
-        provider = make_provider(model, policy, agent_tools.TOOL_SCHEMAS, max_tool_calls)
-        runner = AgentRunner(provider, db)
-
+        mode = _detect_mode(test)
         start = time.time()
-        runner.run_user_messages(test["user_messages"])
+        if mode == "scripted":
+            score = run_scripted(test, cell_args, policy, db, out_dir)
+        else:
+            score = run_two_agent(test, cell_args, policy, db, out_dir)
         elapsed = time.time() - start
-
-        score = evaluate(test["assertions"], db, runner.assistant_messages)
-
-        out_dir = out_root / _safe(model) / test_id / f"run_{run_id}"
-        out_dir.mkdir(parents=True, exist_ok=True)
-        (out_dir / "trace.jsonl").write_text(
-            "\n".join(json.dumps(r, default=str) for r in runner.trace) + "\n"
-        )
-        (out_dir / "final_db.json").write_text(json.dumps(db, indent=2))
-        (out_dir / "messages.json").write_text(json.dumps(runner.assistant_messages, indent=2))
-        (out_dir / "score.json").write_text(json.dumps(score, indent=2))
-        (out_dir / "turn_summaries.json").write_text(json.dumps(runner.turn_summaries, indent=2))
 
         return {
             "model": model,
+            "adversary_model": adversary_model if mode == "two_agent" else None,
             "test_id": test_id,
+            "mode": mode,
             "run_id": run_id,
             "score": score["score"],
             "passed": score["passed"],
             "earned_weight": score["earned_weight"],
             "total_weight": score["total_weight"],
             "elapsed_s": round(elapsed, 1),
-            "tool_calls_total": sum(s["tool_calls_used"] for s in runner.turn_summaries),
-            "turn_statuses": [s["status"] for s in runner.turn_summaries],
-            "n_assistant_messages": len(runner.assistant_messages),
             "out_dir": str(out_dir.relative_to(REPO)),
             "failed_assertions": [
                 {"kind": r["kind"], "weight": r["weight"], "rationale": r["rationale"]}
@@ -131,9 +145,10 @@ def print_progress(done: int, total: int, res: dict) -> None:
         print(f"  [{done}/{total}] ERROR  {res.get('model','?'):18s} {res.get('test_id','?'):<40s} run {res.get('run_id','?')}: {res['error']}")
         return
     flag = "PASS" if res["passed"] else "FAIL"
+    mode_tag = "two_agent" if res.get("mode") == "two_agent" else "scripted "
     print(
-        f"  [{done}/{total}] {flag}   {res['model']:18s} {res['test_id']:<40s} run {res['run_id']}  "
-        f"score={res['score']:.2f}  {res['elapsed_s']:>5.1f}s  tools={res['tool_calls_total']}"
+        f"  [{done}/{total}] {flag}  {mode_tag}  {res['model']:14s} {res['test_id']:<42s} run {res['run_id']}  "
+        f"score={res['score']:.2f}  {res['elapsed_s']:>5.1f}s"
     )
 
 
@@ -206,11 +221,13 @@ def print_matrix(results: list[dict], models: list[str], tests: list[str]) -> No
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--models", nargs="+", required=True)
+    ap.add_argument("--models", nargs="+", required=True, help="seller-side (agent under test) models")
+    ap.add_argument("--adversary-model", default=None, help="buyer-side model for two-agent tests; default: same as agent. Set to a fixed model to test multiple sellers vs the same buyer.")
     ap.add_argument("--tests", nargs="*", help="default: every test in tasks.json")
     ap.add_argument("--runs", type=int, default=1)
     ap.add_argument("--parallel", type=int, default=4)
     ap.add_argument("--max-tool-calls", type=int, default=10)
+    ap.add_argument("--max-rounds", type=int, default=None, help="two-agent only: override per-test max_rounds")
     ap.add_argument("--out-dir", default="runs")
     ap.add_argument("--tasks-file", default="tasks.json")
     ap.add_argument("--seed-db", default="seed_db.json")
@@ -239,7 +256,11 @@ def main() -> None:
     results: list[dict] = []
     with ThreadPoolExecutor(max_workers=args.parallel) as ex:
         futures = [
-            ex.submit(run_cell, m, t, r, tasks_doc, seed, policy, out_root, args.max_tool_calls)
+            ex.submit(
+                run_cell, m, t, r, tasks_doc, seed, policy, out_root, args.max_tool_calls,
+                adversary_model=args.adversary_model,
+                max_rounds=args.max_rounds,
+            )
             for m, t, r in cells
         ]
         total = len(futures)

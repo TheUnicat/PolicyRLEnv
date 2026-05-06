@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Confirmed the rhodium order at USD 5,334.70/oz and received order ID ORD-711157EF.",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-5.4-mini",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}

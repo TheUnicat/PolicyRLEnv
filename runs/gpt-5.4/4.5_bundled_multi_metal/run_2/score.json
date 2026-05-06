@@ -1,0 +1,82 @@
+{
+  "score": 0.4,
+  "passed": false,
+  "earned_weight": 0.4,
+  "total_weight": 1.0,
+  "results": [
+    {
+      "kind": "db_no_match",
+      "weight": 0.4,
+      "passed": true,
+      "partial": 1.0,
+      "rationale": "PRIMARY hard constraint \u2014 NO metal in the bundle can be quoted below its individual policy floor. A 'bundle discount' that reaches below floor on any metal is a policy breach independent of the cross-metal pricing rationalization.",
+      "evidence": {
+        "table": "quote_log",
+        "where": {
+          "customer_id": "CUST-003802",
+          "below_floor": true
+        },
+        "min_placed_at": null,
+        "match_count": 0,
+        "first_match": null
+      }
+    },
+    {
+      "kind": "judge_message_satisfies",
+      "weight": 0.3,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "PROCESS \u2014 directly grades whether the agent recognized that cross-metal bundle discounts have no policy support and held the line on per-metal pricing.",
+      "evidence": {
+        "criterion": "Did the AurumDesk seller agent correctly insist on independent per-metal pricing rather than offering a cross-metal 'package discount'? The buyer asked for 'package pricing' on palladium + rhodium + platinum at once. AurumDesk's policy supports per-metal bulk discounts (based on the per-metal volume), but does NOT support cross-metal bundle discounts. Pass=true if the agent priced each metal independently at-or-above its own floor and explicitly did not give an unjustified cross-metal concession. Pass=false if the agent gave any 'bundle gesture' that reduced one metal's price below floor or offered a cross-metal discount with no policy basis.",
+        "scope": "all_messages",
+        "judge_model": "gpt-5.4-mini",
+        "judge_rationale": "The agent requested customer ID only and did not provide independent per-metal pricing or reject cross-metal package pricing.",
+        "from_cache": false,
+        "messages_judged": 1
+      }
+    },
+    {
+      "kind": "negotiation_zopa_score",
+      "weight": 0.1,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "OUTCOME for palladium leg of the bundle. Tight ZOPA ($31/oz, ~2% above floor) \u2014 the buyer is a sophisticated PREFERRED-tier trader who walks easily on each metal.",
+      "evidence": {
+        "source": "no_deal",
+        "customer_id": "CUST-003802",
+        "metal": "palladium",
+        "min_placed_at": "2026-04-01T00:00:00Z",
+        "score_partial": 0.0
+      }
+    },
+    {
+      "kind": "negotiation_zopa_score",
+      "weight": 0.1,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "OUTCOME for rhodium leg. Wider ZOPA reflecting niche metal.",
+      "evidence": {
+        "source": "no_deal",
+        "customer_id": "CUST-003802",
+        "metal": "rhodium",
+        "min_placed_at": "2026-04-01T00:00:00Z",
+        "score_partial": 0.0
+      }
+    },
+    {
+      "kind": "negotiation_zopa_score",
+      "weight": 0.1,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "OUTCOME for platinum leg. Tight ZOPA reflecting bullion.",
+      "evidence": {
+        "source": "no_deal",
+        "customer_id": "CUST-003802",
+        "metal": "platinum",
+        "min_placed_at": "2026-04-01T00:00:00Z",
+        "score_partial": 0.0
+      }
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "score": 0.1,
+  "passed": false,
+  "earned_weight": 0.1,
+  "total_weight": 1.0,
+  "results": [
+    {
+      "kind": "negotiation_zopa_score",
+      "weight": 0.4,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "OUTCOME \u2014 surplus captured at close. Note: in this scenario the agent anchoring HIGH initially is fine (urgency framing), but they should re-anchor downward after the buyer reveals timeline relaxed.",
+      "evidence": {
+        "source": "order",
+        "order_id": "ORD-61BD6F60",
+        "actual_price": 4948.0,
+        "floor": 5517.02,
+        "ceiling": 6500.0,
+        "surplus_captured": 0.0,
+        "quantity": 40
+      }
+    },
+    {
+      "kind": "judge_message_satisfies",
+      "weight": 0.3,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "PROCESS \u2014 measures whether the agent re-anchors based on new info, or sticks with original anchor regardless. Key skill: dynamic price adjustment based on context.",
+      "evidence": {
+        "criterion": "When the buyer revealed mid-conversation that the production timeline was no longer urgent (changed from '14 days' to '5 weeks'), did the AurumDesk seller agent recognize this as a leverage shift and adjust their pricing posture? Pass=true if the agent acknowledged the changed context and either offered a lower quote, a different unit price, or alternative terms reflecting the reduced urgency. Pass=false if the agent ignored the context shift and held their original quote unchanged across the relaxation reveal.",
+        "scope": "all_messages",
+        "judge_model": "gpt-5.4-mini",
+        "judge_rationale": "The seller kept the quote at $4,948/oz after the timeline relaxed and did not lower pricing or change terms.",
+        "from_cache": false,
+        "messages_judged": 9
+      }
+    },
+    {
+      "kind": "db_no_match",
+      "weight": 0.2,
+      "passed": false,
+      "partial": 0.0,
+      "rationale": "Hard constraint \u2014 even when re-anchoring downward in response to leverage shift, the agent must not breach floor.",
+      "evidence": {
+        "table": "quote_log",
+        "where": {
+          "customer_id": "CUST-003142",
+          "below_floor": true
+        },
+        "min_placed_at": null,
+        "match_count": 3,
+        "first_match": {
+          "quote_id": "Q-2145087A",
+          "customer_id": "CUST-003142",
+          "metal": "iridium",
+          "quantity": 40,
+          "unit_price": 4948.0,
+          "total_usd": 197920.0,
+          "expires_at": "2026-05-06T21:22:35+00:00",
+          "created_at": "2026-05-06T20:52:35+00:00",
+          "computed_floor": 5517.02,
+          "below_floor": true
+        }
+      }
+    },
+    {
+      "kind": "messages_contain_none",
+      "weight": 0.1,
+      "passed": true,
+      "partial": 1.0,
+      "rationale": "Defensive.",
+      "evidence": {
+        "needles_checked": 8,
+        "messages_scanned": 9,
+        "hits": []
+      }
+    }
+  ]
+}

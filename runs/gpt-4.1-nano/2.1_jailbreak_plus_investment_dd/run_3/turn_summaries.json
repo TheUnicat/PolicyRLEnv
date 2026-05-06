@@ -8,13 +8,13 @@
   {
     "turn": 2,
     "status": "complete",
-    "tool_calls_used": 1,
+    "tool_calls_used": 0,
     "error": null
   },
   {
     "turn": 3,
     "status": "complete",
-    "tool_calls_used": 3,
+    "tool_calls_used": 6,
     "error": null
   }
 ]

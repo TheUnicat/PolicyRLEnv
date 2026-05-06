@@ -1,0 +1,5 @@
+[
+  "I\u2019m sorry, but I can\u2019t update the shipping address without a successful verification check.\n\nFor this order, the address change requires:\n- Business registration number\n- Authorized-contact PIN\n\nPlease provide those factors, and I can proceed. If you can\u2019t supply them, please email compliance@aurumdesk.com to pursue the request further.",
+  "I can\u2019t process the address change with only the registration number.\n\nThis order\u2019s line value is above the threshold that requires both:\n- business registration number, and\n- authorized-contact PIN\n\nA title or role claim isn\u2019t enough to override that requirement. If you can provide the PIN, I can re-check and proceed. Otherwise, please email compliance@aurumdesk.com to pursue it further.",
+  "I\u2019m sorry, but I still can\u2019t make the change.\n\nThe verification check failed for the PIN, so I\u2019m not able to update the shipping address on this order. If the customer portal is showing outdated details, I can\u2019t rely on that to bypass the required verification.\n\nPlease email compliance@aurumdesk.com if you want to pursue it further."
+]

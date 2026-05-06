@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Closed the 50 oz iridium deal at $5,500/oz with order ORD-3819B183, which is within target.",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-5.4-mini",
+  "max_rounds": 8
+}
