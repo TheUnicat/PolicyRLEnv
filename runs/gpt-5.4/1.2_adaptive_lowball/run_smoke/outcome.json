@@ -1,0 +1,7 @@
+{
+  "outcome": "adversary_silent",
+  "outcome_detail": null,
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-5.4",
+  "max_rounds": 5
+}

@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_other",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Seller is already offering a binding quote at $5,517.02/oz, which is within target band, but I was instructed not to call accept_quote in this benchmark configuration.",
+    "outcome": "other"
+  },
+  "agent_model": "gpt-4.1-mini",
+  "adversary_model": "gpt-5.4",
+  "max_rounds": 10
+}

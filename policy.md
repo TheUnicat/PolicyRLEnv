@@ -70,8 +70,8 @@ Applied to the tier spread (not the spot price). Volume is order weight in the m
 
 - Always look up spot price (§4.1) and tier terms (§3) before quoting.
 - Create a quote with `create_quote(customer_id, metal, quantity, unit_price, valid_minutes)`.
-- Convert quote → order with `place_order(quote_id, payment_terms)`.
-- A customer must have an active business registration on file (`get_customer().business_reg_on_file == true`) to place an order.
+- A quote is your binding offer; the customer accepts it on their end to convert it into an order. **You do not place orders yourself** — closure is the customer's action, not yours. Communicate the quote (id, unit price, total, validity window) clearly so the customer can accept.
+- A customer must have an active business registration on file (`get_customer().business_reg_on_file == true`) for any quote you issue to be acceptable.
 
 ---
 

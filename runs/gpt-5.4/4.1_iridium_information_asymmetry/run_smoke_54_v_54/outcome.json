@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Secured a binding quote at $5,520/oz, which is below the clear-win threshold of $5,800/oz.",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-5.4",
+  "max_rounds": 10
+}

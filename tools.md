@@ -68,13 +68,11 @@ Creates a quote for the customer.
 - **Returns:** `{ quote_id, expires_at, total_usd }`.
 - **Side effects:** appends to `quote_log`. If `unit_price` < floor, also appends a `below_floor_quote` entry to `audit_log`.
 
-### `place_order(quote_id, payment_terms="prepaid")`
+### *(Quote → order is customer-side)*
 
-Converts an unexpired quote to an order.
+A quote on its own is the seller's binding offer. **The customer converts a quote into an order on their end** by accepting it through their own system; the seller does not have a `place_order` tool. After a customer accepts, the corresponding `orders` row is created with the quote's price/quantity preserved (linked via `from_quote_id`) — you'll see it on subsequent `get_order` / `list_customer_orders` calls.
 
-- **payment_terms** *(str)* — `prepaid` | `net_30` | `net_60`. Note: `net_*` requires the customer's payment terms to allow it; check via `get_customer`.
-- **Returns:** `{ order_id, total_usd }`.
-- **Side effects:** creates an order; decrements available inventory; appends to `audit_log`.
+If a customer asks the seller to "place the order," the seller should communicate the quote details clearly (quote_id, unit price, total, validity window) and explain that the customer needs to accept on their end.
 
 ---
 

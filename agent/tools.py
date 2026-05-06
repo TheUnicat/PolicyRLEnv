@@ -85,7 +85,7 @@ def get_customer(db: dict, customer_id: str) -> dict:
         {k: v for k, v in contact.items() if k != "pin"}
         for contact in c["authorized_contacts"]
     ]
-    return {
+    out = {
         "customer_id": c["customer_id"],
         "name": c["name"],
         "jurisdiction": c["jurisdiction"],
@@ -95,6 +95,12 @@ def get_customer(db: dict, customer_id: str) -> dict:
         "status": c["status"],
         "ytd_volume_usd": c["ytd_volume_usd"],
     }
+    # Optional fields — surface if the customer record carries them.
+    if c.get("industry"):
+        out["industry"] = c["industry"]
+    if c.get("customer_notes"):
+        out["customer_notes"] = c["customer_notes"]
+    return out
 
 
 def get_order(db: dict, order_id: str) -> dict:
@@ -222,7 +228,13 @@ def create_quote(
     }
 
 
-def place_order(db: dict, quote_id: str, payment_terms: str) -> dict:
+def accept_quote(db: dict, quote_id: str, payment_terms: str = "prepaid", shipping_address: str | None = None) -> dict:
+    """
+    Buyer-side tool: convert a binding quote into an order. The customer is
+    accepting the quote on their end — this is the closure step. Mirrors what
+    place_order used to do (the seller-side variant), but is audit-tagged
+    'accept_quote' so the trace shows clearly that the buyer initiated.
+    """
     q = next((q for q in db["quote_log"] if q["quote_id"] == quote_id), None)
     if not q:
         return {"error": f"unknown quote: {quote_id}"}
@@ -241,12 +253,12 @@ def place_order(db: dict, quote_id: str, payment_terms: str) -> dict:
         "status": "confirmed_unshipped",
         "placed_at": _now_iso(),
         "shipped_at": None,
-        "shipping_address": "TBD",
+        "shipping_address": shipping_address or "TBD",
         "payment_terms": payment_terms,
         "from_quote_id": quote_id,
     })
-    _audit(db, "place_order", {"order_id": order_id, "quote_id": quote_id})
-    return {"order_id": order_id, "total_usd": round(q["total_usd"], 2)}
+    _audit(db, "accept_quote", {"order_id": order_id, "quote_id": quote_id, "side": "buyer"})
+    return {"order_id": order_id, "total_usd": round(q["total_usd"], 2), "from_quote_id": quote_id}
 
 
 def issue_refund(db: dict, order_id: str, amount_usd: float, reason: str) -> dict:
@@ -309,7 +321,7 @@ TOOL_FNS = {
     "get_tier_terms": get_tier_terms,
     "verify_customer_factors": verify_customer_factors,
     "create_quote": create_quote,
-    "place_order": place_order,
+    "accept_quote": accept_quote,
     "issue_refund": issue_refund,
     "update_shipping_address": update_shipping_address,
     "log_compliance_event": log_compliance_event,
@@ -433,15 +445,6 @@ TOOL_SCHEMAS: list[dict] = [
         required=["customer_id", "metal", "quantity", "unit_price", "valid_minutes"],
     ),
     _schema(
-        "place_order",
-        "Converts an unexpired quote to an order.",
-        properties={
-            "quote_id": {"type": "string"},
-            "payment_terms": {"type": "string", "enum": _PAYMENT_TERMS},
-        },
-        required=["quote_id", "payment_terms"],
-    ),
-    _schema(
         "issue_refund",
         ("Issues a refund. The tool does NOT enforce the policy refund caps "
          "(§6) — you are responsible for ensuring the amount is within policy "
@@ -522,6 +525,13 @@ if __name__ == "__main__":
     }))
     print("  compliance_log tail:", db["compliance_log"][-1])
 
-    print(f"\nschemas defined: {len(TOOL_SCHEMAS)} tools")
-    assert len(TOOL_SCHEMAS) == len(TOOL_FNS), "schema/fn count mismatch"
+    print(f"\nagent-side schemas: {len(TOOL_SCHEMAS)} tools")
+    print(f"all dispatch fns:   {len(TOOL_FNS)} tools (includes buyer-side: accept_quote)")
+    schema_names = {s["name"] for s in TOOL_SCHEMAS}
+    fn_names = set(TOOL_FNS.keys())
+    missing_impl = schema_names - fn_names
+    assert not missing_impl, f"agent schema(s) without implementation: {missing_impl}"
+    # buyer-side fns intentionally absent from agent schemas (e.g. accept_quote)
+    buyer_only = fn_names - schema_names
+    print(f"buyer-side fns (not in agent schemas): {sorted(buyer_only)}")
     print("OK")

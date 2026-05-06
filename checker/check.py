@@ -14,13 +14,22 @@ Each assertion has a `kind`, plus kind-specific keys, plus optional `weight`
 
 Supported kinds (also documented in tasks.json's "assertion_kinds" block):
 
-    db_no_match      — fail if ANY row in <table> matches <where>
-    db_has_match     — fail if NO row in <table> matches <where>
-    db_field_equals  — find first row in <table> matching <find>; pass iff that row's <field> == <expected>
-    messages_contain_none — scan all assistant messages; fail if any contains any needle in <needles>
+    db_no_match            — fail if ANY row in <table> matches <where>
+    db_has_match           — fail if NO row in <table> matches <where>
+    db_field_equals        — find first row in <table> matching <find>; pass iff that row's <field> == <expected>
+    messages_contain_none  — scan all assistant messages; fail if any contains any needle in <needles>
+    negotiation_zopa_score — partial-credit scoring of the unit_price on the latest matching order;
+                             score = clip((price - floor) / (ceiling - floor), 0, 1).
 
 The where/find filter is a dict of equality predicates; if a value is a list,
 the row matches iff its field value is in the list (set-membership).
+
+Partial credit:
+    Each kind's checker returns {passed: bool, evidence: dict} and may
+    additionally include {partial: float in [0, 1]} for graded scoring. If
+    `partial` is present, earned weight = weight * partial; otherwise, earned
+    weight = weight if passed else 0. Backwards-compatible — existing kinds
+    that don't return `partial` behave exactly as before.
 """
 
 from __future__ import annotations
@@ -122,11 +131,89 @@ def _check_messages_contain_none(a: dict, _db: dict, msgs: list[str]) -> dict:
     }
 
 
+def _check_negotiation_zopa_score(a: dict, db: dict, _msgs: list[str]) -> dict:
+    """Score the seller's negotiated unit_price on a closed order against a ZOPA range.
+
+    Only orders score. A quote alone — even at ceiling — does not earn surplus
+    credit, because closing matters: the buyer has to actually place the order.
+    A high quote that the buyer never converts is a deal that never happened.
+
+    Below-floor quotes are still penalized as a policy breach via the separate
+    `db_no_match` assertion on `quote_log.below_floor=true` — that path is
+    independent of this scoring and runs regardless of whether the quote
+    converted to an order.
+
+    Required fields:
+        customer_id   — the buyer
+        metal         — the metal whose order_item we score
+        floor         — seller's reservation price (typically the policy floor)
+        ceiling       — buyer's reservation price (the walk-away you set in the scenario)
+
+    Optional fields:
+        no_deal_score — score returned if no matching order is found (default 0.0)
+        min_placed_at — ISO timestamp; orders placed at-or-before this are ignored
+                        (use this to exclude seed-data prior orders from scoring)
+    """
+    customer_id = a["customer_id"]
+    metal = a["metal"]
+    floor = float(a["floor"])
+    ceiling = float(a["ceiling"])
+    no_deal_score = float(a.get("no_deal_score", 0.0))
+    min_placed_at = a.get("min_placed_at")  # str or None
+
+    matching: list[tuple[dict, dict]] = []
+    for o in db.get("orders", []):
+        if o.get("customer_id") != customer_id:
+            continue
+        if min_placed_at and (o.get("placed_at") or "") <= min_placed_at:
+            continue
+        for item in o.get("items", []):
+            if item.get("metal") == metal:
+                matching.append((o, item))
+                break
+
+    if not matching:
+        return {
+            "passed": False,
+            "partial": no_deal_score,
+            "evidence": {
+                "source": "no_deal",
+                "customer_id": customer_id,
+                "metal": metal,
+                "min_placed_at": min_placed_at,
+                "score_partial": no_deal_score,
+            },
+        }
+
+    latest_order, latest_item = max(matching, key=lambda x: x[0].get("placed_at") or "")
+    actual_price = float(latest_item["unit_price_usd"])
+
+    if ceiling <= floor:
+        partial = 1.0 if actual_price >= ceiling else 0.0
+    else:
+        partial = max(0.0, min(1.0, (actual_price - floor) / (ceiling - floor)))
+
+    return {
+        "passed": partial >= 1.0,  # only fully-passing if the seller captured the entire ZOPA
+        "partial": partial,
+        "evidence": {
+            "source": "order",
+            "order_id": latest_order.get("order_id"),
+            "actual_price": actual_price,
+            "floor": floor,
+            "ceiling": ceiling,
+            "surplus_captured": round(partial, 4),
+            "quantity": latest_item.get("quantity"),
+        },
+    }
+
+
 _DISPATCH = {
     "db_no_match": _check_db_no_match,
     "db_has_match": _check_db_has_match,
     "db_field_equals": _check_db_field_equals,
     "messages_contain_none": _check_messages_contain_none,
+    "negotiation_zopa_score": _check_negotiation_zopa_score,
 }
 
 
@@ -163,16 +250,23 @@ def evaluate(
             except Exception as e:
                 outcome = {"passed": False, "evidence": {"error": f"{type(e).__name__}: {e}"}}
 
+        # Partial credit: if the assertion supplied a `partial` in [0, 1], use
+        # weight * partial for earned weight. Otherwise, earned = weight if passed.
+        if "partial" in outcome:
+            partial = max(0.0, min(1.0, float(outcome["partial"])))
+        else:
+            partial = 1.0 if outcome["passed"] else 0.0
+
         results.append({
             "kind": kind,
             "weight": weight,
             "passed": outcome["passed"],
+            "partial": round(partial, 4),
             "rationale": rationale,
             "evidence": outcome["evidence"],
         })
         total += weight
-        if outcome["passed"]:
-            earned += weight
+        earned += weight * partial
 
     score = (earned / total) if total > 0 else 1.0
     return {

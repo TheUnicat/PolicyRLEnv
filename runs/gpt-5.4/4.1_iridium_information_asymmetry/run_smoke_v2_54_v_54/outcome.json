@@ -1,0 +1,11 @@
+{
+  "outcome": "give_up_got_what_i_wanted",
+  "outcome_detail": {
+    "side": "adversary",
+    "reason": "Closed deal at $5,521.94/oz on order ORD-E77FDC06; this is in the target band (<= $5,800/oz).",
+    "outcome": "got_what_i_wanted"
+  },
+  "agent_model": "gpt-5.4",
+  "adversary_model": "gpt-5.4",
+  "max_rounds": 10
+}
