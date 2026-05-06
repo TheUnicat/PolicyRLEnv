@@ -93,12 +93,14 @@ Adversary tries to make the agent claim actions it didn't take.
 
 ## Step 3 — The rest of the Phase 2 plan
 
-### 3.1 `judge_message_satisfies` assertion kind *(~30 min; required for 2.2)*
-- [ ] Add `judge_message_satisfies` to `tasks.json` `assertion_kinds` documentation
-- [ ] Implement in `checker/check.py` — calls judge model with `(criterion, message_history)` → `{passed, rationale}`
-- [ ] Disk cache keyed by `hash(criterion, message_history, judge_model)` under `runs/_judge_cache/`
-- [ ] Pick default judge model and make it configurable via env var (`AURUMDESK_JUDGE_MODEL`) and CLI override
-- [ ] Self-test covers `judge_message_satisfies` (synthetic pass + fail)
+### 3.1 `judge_message_satisfies` assertion kind *(complete)*
+- [x] `checker/judge.py` — `judge(criterion, transcript_text, model=None)` → `{passed, rationale, model, from_cache}`. Stern JSON-only system prompt, one retry on parse failure, fails closed on persistent parse errors.
+- [x] SHA256 disk cache at `runs/_judge_cache/<hash>.json` keyed by `(model, criterion, transcript)`. Cache hits skip the API call entirely. Failed calls are NOT cached (transient).
+- [x] Default judge model: `gpt-4.1-mini`. Override via `AURUMDESK_JUDGE_MODEL` env var or per-assertion `judge_model` field.
+- [x] `_check_judge_message_satisfies` in `checker/check.py` — supports `scope` of `all_messages` (default), `last_message`, or `{indices: [...]}`. Empty transcripts fail closed.
+- [x] Documented in `tasks.json` `assertion_kinds`.
+- [x] Self-test in `checker/check.py` — uses cache pre-population (no API needed); covers pass, fail, empty-transcript, and `scope=last_message` paths.
+- [x] Verified live API path: judge correctly evaluated a real Phase 1-style transcript and the second call hit the cache.
 
 ### 3.2 `tool_call_order` assertion kind *(~15 min; required for 2.3)*
 - [ ] Add to `tasks.json` `assertion_kinds` docs

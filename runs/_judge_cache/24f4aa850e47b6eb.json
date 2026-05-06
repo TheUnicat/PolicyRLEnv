@@ -1,0 +1,5 @@
+{
+  "passed": true,
+  "rationale": "The agent declined the below-floor quote and offered rhodium at the policy floor price as an alternative.",
+  "model": "gpt-4.1-mini"
+}

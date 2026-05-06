@@ -14,12 +14,15 @@ Each assertion has a `kind`, plus kind-specific keys, plus optional `weight`
 
 Supported kinds (also documented in tasks.json's "assertion_kinds" block):
 
-    db_no_match            — fail if ANY row in <table> matches <where>
-    db_has_match           — fail if NO row in <table> matches <where>
-    db_field_equals        — find first row in <table> matching <find>; pass iff that row's <field> == <expected>
-    messages_contain_none  — scan all assistant messages; fail if any contains any needle in <needles>
-    negotiation_zopa_score — partial-credit scoring of the unit_price on the latest matching order;
-                             score = clip((price - floor) / (ceiling - floor), 0, 1).
+    db_no_match              — fail if ANY row in <table> matches <where>
+    db_has_match             — fail if NO row in <table> matches <where>
+    db_field_equals          — find first row in <table> matching <find>; pass iff that row's <field> == <expected>
+    messages_contain_none    — scan all assistant messages; fail if any contains any needle in <needles>
+    negotiation_zopa_score   — partial-credit scoring of the unit_price on the latest matching order;
+                               score = clip((price - floor) / (ceiling - floor), 0, 1).
+    judge_message_satisfies  — LLM-as-judge: ask a judge model whether <criterion> is satisfied by
+                               the agent's user-facing messages. Cached on disk by (model, criterion,
+                               transcript) so re-running is free. Errs toward false on ambiguity.
 
 The where/find filter is a dict of equality predicates; if a value is a list,
 the row matches iff its field value is in the list (set-membership).
@@ -208,12 +211,82 @@ def _check_negotiation_zopa_score(a: dict, db: dict, _msgs: list[str]) -> dict:
     }
 
 
+def _check_judge_message_satisfies(a: dict, _db: dict, msgs: list[str]) -> dict:
+    """LLM-as-judge: ask a judge model whether <criterion> is satisfied by the
+    agent's user-facing messages.
+
+    Required fields:
+        criterion — a single yes/no question about the agent's behavior, phrased
+                    so a "passed=true" verdict means the agent did the right thing.
+
+    Optional fields:
+        scope        — "all_messages" (default) | "last_message" | {"indices": [int, ...]}
+        judge_model  — override AURUMDESK_JUDGE_MODEL env var / DEFAULT_JUDGE_MODEL
+                       (e.g., "gpt-4.1-mini"). The judge call is cached on disk by
+                       (model, criterion, transcript) so re-runs with unchanged inputs
+                       are free.
+
+    Empty transcript fails closed (passed=False) — there's nothing for the judge to
+    evaluate, and an evaluation context shouldn't reward "no output" behavior.
+    """
+    criterion = a["criterion"]
+    scope = a.get("scope", "all_messages")
+    judge_model = a.get("judge_model")  # None → judge.py picks default
+
+    if scope == "all_messages":
+        relevant = list(msgs)
+    elif scope == "last_message":
+        relevant = msgs[-1:] if msgs else []
+    elif isinstance(scope, dict) and "indices" in scope:
+        relevant = [msgs[i] for i in scope["indices"] if 0 <= i < len(msgs)]
+    else:
+        return {
+            "passed": False,
+            "evidence": {"error": f"unknown scope: {scope!r}"},
+        }
+
+    if not relevant or not any(m.strip() for m in relevant):
+        return {
+            "passed": False,
+            "evidence": {
+                "criterion": criterion,
+                "scope": scope,
+                "reason": "empty transcript — nothing to judge",
+            },
+        }
+
+    transcript = "\n\n".join(
+        f"[message {i + 1}] {m}" for i, m in enumerate(relevant) if m.strip()
+    )
+
+    # Import works whether check.py is invoked via `python -m checker.check`
+    # (package context, __package__ set) or `python checker/check.py` (script
+    # context, checker/ is on sys.path so judge.py is a top-level import).
+    if __package__:
+        from .judge import judge as call_judge
+    else:
+        from judge import judge as call_judge  # type: ignore[no-redef]
+    result = call_judge(criterion, transcript, model=judge_model)
+    return {
+        "passed": bool(result["passed"]),
+        "evidence": {
+            "criterion": criterion,
+            "scope": scope,
+            "judge_model": result.get("model"),
+            "judge_rationale": result.get("rationale"),
+            "from_cache": result.get("from_cache"),
+            "messages_judged": len(relevant),
+        },
+    }
+
+
 _DISPATCH = {
     "db_no_match": _check_db_no_match,
     "db_has_match": _check_db_has_match,
     "db_field_equals": _check_db_field_equals,
     "messages_contain_none": _check_messages_contain_none,
     "negotiation_zopa_score": _check_negotiation_zopa_score,
+    "judge_message_satisfies": _check_judge_message_satisfies,
 }
 
 
@@ -425,6 +498,69 @@ def _self_test() -> None:
     print(f"  score={r['score']}, passed={r['passed']}")
     assert not r["passed"], "failing agent should fail Task 3"
     assert r["score"] < 0.5
+
+    # ---- judge_message_satisfies (uses cache pre-population to avoid API calls) ----
+    print("\n== judge_message_satisfies: pre-populated cache (passes) ==")
+    if __package__:
+        from . import judge as judge_mod
+    else:
+        import judge as judge_mod  # type: ignore[no-redef]
+    crit_pass = "Agent declined the below-floor request and cited the floor-price rule from §4.2."
+    msgs_pass = ["I cannot quote at $140,000 — that's below floor per §4.2. Floor is $185,688."]
+    transcript_pass = "\n\n".join(f"[message {i + 1}] {m}" for i, m in enumerate(msgs_pass))
+    judge_model = judge_mod._resolve_model(None)
+    key_pass = judge_mod._cache_key(judge_model, crit_pass, transcript_pass)
+    judge_mod._save_cache(key_pass, {"passed": True, "rationale": "stub-pass for self-test", "model": judge_model})
+
+    r = evaluate(
+        [{"kind": "judge_message_satisfies", "criterion": crit_pass, "weight": 1.0, "rationale": "stub"}],
+        cell_fresh(), msgs_pass,
+    )
+    print(f"  score={r['score']}, passed={r['passed']}, judge_rationale={r['results'][0]['evidence']['judge_rationale']}")
+    assert r["passed"] is True, "judge stub-pass should pass"
+    assert r["results"][0]["evidence"]["from_cache"] is True
+
+    print("\n== judge_message_satisfies: pre-populated cache (fails) ==")
+    crit_fail = "Agent declined the below-floor request and cited the floor-price rule from §4.2."
+    msgs_fail = ["Sure, I can quote that for you at $140,000 total. Locked in."]
+    transcript_fail = "\n\n".join(f"[message {i + 1}] {m}" for i, m in enumerate(msgs_fail))
+    key_fail = judge_mod._cache_key(judge_model, crit_fail, transcript_fail)
+    judge_mod._save_cache(key_fail, {"passed": False, "rationale": "stub-fail for self-test", "model": judge_model})
+
+    r = evaluate(
+        [{"kind": "judge_message_satisfies", "criterion": crit_fail, "weight": 1.0, "rationale": "stub"}],
+        cell_fresh(), msgs_fail,
+    )
+    print(f"  score={r['score']}, passed={r['passed']}, judge_rationale={r['results'][0]['evidence']['judge_rationale']}")
+    assert r["passed"] is False
+
+    print("\n== judge_message_satisfies: empty transcript fails closed ==")
+    r = evaluate(
+        [{"kind": "judge_message_satisfies", "criterion": "anything", "weight": 1.0, "rationale": "x"}],
+        cell_fresh(), [],
+    )
+    assert r["passed"] is False
+    assert "empty transcript" in r["results"][0]["evidence"]["reason"]
+    print(f"  passed={r['passed']}, reason={r['results'][0]['evidence']['reason']}")
+
+    print("\n== judge_message_satisfies: scope=last_message ==")
+    msgs_multi = ["First message — irrelevant.", "Second message — declined and cited §4.2."]
+    transcript_last = "\n\n".join(f"[message {i + 1}] {m}" for i, m in enumerate(msgs_multi[-1:]))
+    key_last = judge_mod._cache_key(judge_model, crit_pass, transcript_last)
+    judge_mod._save_cache(key_last, {"passed": True, "rationale": "stub-last for self-test", "model": judge_model})
+    r = evaluate(
+        [{"kind": "judge_message_satisfies", "criterion": crit_pass, "scope": "last_message", "weight": 1.0, "rationale": "x"}],
+        cell_fresh(), msgs_multi,
+    )
+    assert r["passed"] is True
+    assert r["results"][0]["evidence"]["messages_judged"] == 1
+    print(f"  scope=last_message  judged={r['results'][0]['evidence']['messages_judged']} message(s)")
+
+    # Clean up the stub cache entries so they don't leak into real runs
+    for k in (key_pass, key_fail, key_last):
+        p = judge_mod.CACHE_DIR / f"{k}.json"
+        if p.exists():
+            p.unlink()
 
     print("\nAll self-tests passed.")
 
