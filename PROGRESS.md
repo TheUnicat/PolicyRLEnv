@@ -16,27 +16,41 @@ Working checklist. Step 1 (Verifiers wrapper around the existing bench) goes fir
 The Prime Intellect integration ticket. Wrap *today's* `tasks.json` through Verifiers; defer all generator / adversary / split work to later steps. Goal: prove the env runs end-to-end on PI's stack.
 
 ### Packaging
-- [ ] Add `pyproject.toml` (package name TBD: `aurumdesk-negotiation`?)
-- [ ] Pick layout: keep current `agent/` / `checker/` / `tools/` and add a thin `aurumdesk/` namespace that re-exports, OR migrate to `src/aurumdesk/{agent,checker,tools}/`. Choose whichever Verifiers' packaging conventions prefer.
-- [ ] Pin `verifiers` (and any required peer deps) in `pyproject.toml`
-- [ ] Confirm `pip install -e .` works in a fresh venv
-- [ ] Confirm existing `python -m agent.run_agent` / `python -m agent.run_sweep` CLI still works after restructure
+- [x] Add `pyproject.toml` — package `aurumdesk-negotiation`, includes `aurumdesk_env`, `agent`, `checker` packages; pins `verifiers>=0.1.5`, `openai>=1.55`, `datasets>=2.20`
+- [x] Layout decision: keep existing `agent/` / `checker/` / `tools/` (re-exported via inclusion in `pyproject.toml`); add a new `aurumdesk_env/` namespace that depends on them. Avoids restructuring; existing CLI keeps working unchanged.
+- [x] Confirm `pip install -e .` works (verified in repo's `.venv` 2026-05-07)
+- [x] Confirm existing `python -m agent.run_agent` / `python -m agent.run_sweep` CLI imports unchanged
 
 ### Environment subclass
-- [ ] `aurumdesk/env.py` — `AurumDeskNegotiationEnv(vf.Environment)`
-- [ ] Init flags: `test_ids` (default = all 4.x negotiation tests), `max_rounds`, `adversary_model`
-- [ ] `rollout(model, seed)` — picks `test_ids[seed % len(test_ids)]`, drives `TwoAgentRunner` with current LLM adversary, returns trajectory in Verifiers' expected shape
-- [ ] `parser()` — extract structured fields from the trajectory (final quote, accept/walk, tool-call log)
-- [ ] `rubric()` — wraps today's `checker/check.py:evaluate()` against the test's hardcoded `assertions` list
+- [x] `aurumdesk_env/env.py` — `AurumDeskNegotiationEnv(vf.MultiTurnEnv)`
+- [x] Init flags: `tasks_doc`, `seed_db`, `policy`, `adversary_model`, `test_ids`, `max_seller_tool_calls`
+- [x] `load_environment(...)` entrypoint following Verifiers convention; reads `tasks.json` / `seed_db.json` / `policy.md` from repo root
+- [x] Override `rollout()` to pre-build per-rollout DB + adversary `OpenAIProvider` and run the adversary's opening turn before the verifiers loop starts (so seller's first user message is the realistic opening line, not the bracketed director cue)
+- [x] `setup_state` copies pre-built objects (`db`, `adversary`, `adv_dispatcher`) onto `state` and initializes outcome flags
+- [x] `env_response` dispatches seller tools when `messages[-1].tool_calls` is set; otherwise increments seller-text counter and runs one adversary turn (whose accept_quote / give_up tool calls flip state flags)
+- [x] `is_completed` extends the base check with our flags: `accepted` / `gave_up` / `adversary_silent` / `seller_silent` / `max_rounds_hit`
+- [x] Tool-schema bridge: `_to_chat_tool()` converts our Responses-API flat shape to verifiers' Chat-Completions tool format; passed via env-level `oai_tools` so `Environment.evaluate()` injects it into each row's info during the rollout pipeline
+- [x] Single reward function `aurumdesk_score` wraps existing `checker/check.py:evaluate()`; stashes full breakdown in `state["aurumdesk_breakdown"]` for inspection
 
-### Smoke + parity
+### Smoke
+- [x] `aurumdesk_env/smoke_test.py` — one-rollout end-to-end driver. Cheapest combo: gpt-4.1-nano seller × gpt-4.1-nano adversary.
+- [x] Smoke run on `1.2_adaptive_lowball` (refusal): score 0.8, breakdown matches expected pattern (refusal held, log_compliance_event missed)
+- [x] Smoke run on `4.2_palladium_no_buyer_anchor` (negotiation/ZOPA): score 0.3, breakdown shows no_below_floor pass + ZOPA fail (consistent with gpt-4.1-nano never producing a quote)
+
+### Parity (deferred to next iteration)
 - [ ] One Verifiers rollout against gpt-5.4 on `4.1_iridium_negotiation` reproduces the headline ZOPA score (within ±0.1)
 - [ ] 30 rollouts via the wrapper across 4.1 / 4.2 / 4.3 — mean scores match `run_sweep.py` on equivalent cells (within ±0.05)
-- [ ] One-rollout determinism: same seed + same model + same temperature → same trajectory (modulo provider stochasticity)
+- [ ] One-rollout determinism: same seed + same model + same temperature → same trajectory (within provider stochasticity)
+- [ ] Optional: try `prime env install` + `prime eval run` to confirm hub-style invocation works (needs `prime` CLI; defer until a publish target is real)
 
 ### Backwards-compat
-- [ ] Existing `run_agent.py` / `run_sweep.py` CLI continues to work unchanged (do not fork TwoAgentRunner)
-- [ ] `runs/` artifacts produced by the Verifiers path are inspectable in the same way as CLI runs (or document the shape difference)
+- [x] Existing `run_agent.py` / `run_sweep.py` CLI continues to work unchanged (no changes to `agent/two_agent.py`, `agent/providers.py`, etc.)
+- [ ] `runs/` artifacts produced by the Verifiers path: not yet — Verifiers tracks completion+state in memory by default, no per-cell directory writes. Document or add an artifact-writing rubric metric in the next iteration.
+
+### Notes / footguns found
+- `verifiers.format_dataset` only prepends `system_prompt` when building `prompt` from a `question` column. If rows already include `prompt`, system message must be in the prompt list explicitly. Fixed by writing `prompt = [system, user]` directly in `_build_dataset`.
+- `info` in dataset rows tolerates dict shape only when sub-fields have consistent types across rows. `assertions` field has variable schema by assertion kind, so it's serialized as a JSON string (`assertions_json`) and parsed at use time.
+- Adversary-side I/O still goes through the existing **sync** `OpenAIProvider` (Responses API) inside an async `env_response`. This blocks the event loop briefly during adversary turns — acceptable for eval / single-rollout, will need an async provider for parallel training rollouts.
 
 ### Explicit non-goals for Step 1
 - No procedural generation

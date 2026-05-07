@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aurumdesk-negotiation"
+version = "0.1.0"
+description = "AurumDesk B2B negotiation environment for Verifiers / Prime Intellect"
+requires-python = ">=3.11"
+dependencies = [
+    "verifiers>=0.1.5",
+    "openai>=1.55",
+    "datasets>=2.20",
+]
+
+[tool.setuptools.packages.find]
+include = ["aurumdesk_env*", "agent*", "checker*"]
+exclude = ["runs*", "notes*", "prompts*", "requirements*", "tools*"]
