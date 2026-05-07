@@ -428,7 +428,7 @@ def _section_methodology() -> str:
         "- **Outcome-based grading.** Six assertion kinds, including `negotiation_zopa_score` for partial-credit price scoring and `judge_message_satisfies` for LLM-as-judge over free-form criteria. Score = Σ(weight × partial) / Σ(weight).\n"
         "- **Synthetic, no real PII.** All companies, customers, prices, and addresses are invented for the benchmark.\n"
         "- **Reproducible.** All artifacts (transcripts, DB state, trace, judge cache) are saved per run under `runs/`.\n\n"
-        "Full details: see [`README.md`](README.md) and [`PHASE_2_PLAN.md`](PHASE_2_PLAN.md).\n"
+        "Full details: see [`README.md`](README.md).\n"
     )
 
 

@@ -1,8 +1,8 @@
 # Model Answers and Rubric
 
-> **Scope: Phase 1 (scripted) tests only.** This file currently covers `1.1_persistent_lowball`, `2.1_jailbreak_plus_investment_dd`, and `3.1_no_factors_then_mangled_factors` — the three Phase 1 scripted tests. The Phase 2 two-agent tests (`1.2`, `2.2`, `3.2`, `4.1`) reuse the same assertion structure and (for `1.2`/`2.2`/`3.2`) the same correct behaviors as their scripted ancestors; their scoring and adversarial design are documented in `tasks.json` (rationale fields) and `prompts/adversary_*.md`. The negotiation test `4.1` doesn't have a single "correct answer" — it's a partial-credit ZOPA test, see [`PHASE_2_PLAN.md`](PHASE_2_PLAN.md) and [`README.md`](README.md) for the design.
+> **Scope: scripted tests only.** This file currently covers `1.1_persistent_lowball`, `2.1_jailbreak_plus_investment_dd`, and `3.1_no_factors_then_mangled_factors` — the three scripted tests. The two-agent tests (`1.2`, `2.2`, `3.2`, `4.x`) reuse the same assertion structure and (for `1.2`/`2.2`/`3.2`) the same correct behaviors as their scripted ancestors; their scoring and adversarial design are documented in `tasks.json` (rationale fields) and `prompts/adversary_*.md`. The negotiation tests don't have a single "correct answer" — they're partial-credit ZOPA tests; see [`notes/PHASE_2_PLAN.md`](notes/PHASE_2_PLAN.md) and [`README.md`](README.md).
 >
-> Structured `model_answer` blocks per test in `tasks.json` are pending: see Step 3.8 in [`PHASE_2_PROGRESS.md`](PHASE_2_PROGRESS.md). Once that lands, this `MODEL_ANSWERS.md` becomes a build artifact auto-rendered from those blocks.
+> Structured `model_answer` blocks per test in `tasks.json` are pending: see Step 3.8 in [`notes/PHASE_2_PROGRESS.md`](notes/PHASE_2_PROGRESS.md). Once that lands, this `MODEL_ANSWERS.md` becomes a build artifact auto-rendered from those blocks.
 
 This document is the **manual expert solution** for every Phase 1 scripted test. For each test it shows:
 

@@ -1,8 +1,8 @@
 # Progress Checklist — Phase 1
 
-> **Status:** Phase 1 complete (2026-05-05). Phase 2 plan/progress live in `../PHASE_2_PLAN.md` and `../PHASE_2_PROGRESS.md` at the repo root.
+> **Status:** Phase 1 complete (2026-05-05). Phase 2 plan/progress: [PHASE_2_PLAN.md](PHASE_2_PLAN.md) / [PHASE_2_PROGRESS.md](PHASE_2_PROGRESS.md). Active plan/progress at repo root.
 
-Working checklist for the AurumDesk benchmark build. Plan: see [PLAN.md](PLAN.md). Source brief: see [../requirements/](../requirements/).
+Working checklist for the AurumDesk benchmark build. Plan: see [PHASE_1_PLAN.md](PHASE_1_PLAN.md). Source brief: see [../requirements/](../requirements/).
 
 Time budget: 2–3 hours. Phase headers carry rough minute estimates from the plan; treat them as soft caps.
 

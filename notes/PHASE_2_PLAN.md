@@ -1,6 +1,6 @@
 # Phase 2 Plan — Two-Agent Mode + Underserved Test Domains
 
-> **Status:** TENTATIVE. Drafted 2026-05-06, re-prioritized after the differentiability discussion. Phase 1 plan/progress are in `notes/PLAN.md` and `notes/PROGRESS.md`.
+> **Status:** Phase 2 mostly complete (2026-05-07). Headlines (two-agent mode + negotiation tasks + LLM judge + 144-cell sweep) shipped; deferred items at the bottom of [PHASE_2_PROGRESS.md](PHASE_2_PROGRESS.md). Phase 1 plan/progress: [PHASE_1_PLAN.md](PHASE_1_PLAN.md) / [PHASE_1_PROGRESS.md](PHASE_1_PROGRESS.md). Active plan/progress at repo root.
 
 ## Goal
 
@@ -120,7 +120,7 @@ Optional per-test block on any test in `tasks.json`. Three fields, all optional 
 
 **Why this shape, and not what the planning agent originally proposed:**
 
-The first proposal had separate structured fields for `must_convey`, `must_not_convey`, `policy_refs`, `derivation.values`, `rubric_notes`, `partial_credit`, etc. Rejected — see [the schema-simplicity rule](../notes/AUTHORING_GUIDE.md#schema-design-rule-of-thumb): structure earns its keep only when something programmatically consumes it. None of those fields would have. Prose with conventional sub-headings is just as readable, much easier to author, and doesn't force authors to fill out fields they don't have content for.
+The first proposal had separate structured fields for `must_convey`, `must_not_convey`, `policy_refs`, `derivation.values`, `rubric_notes`, `partial_credit`, etc. Rejected — see [the schema-simplicity rule](AUTHORING_GUIDE.md#schema-design-rule-of-thumb): structure earns its keep only when something programmatically consumes it. None of those fields would have. Prose with conventional sub-headings is just as readable, much easier to author, and doesn't force authors to fill out fields they don't have content for.
 
 **What the renderer does:** walks every test in `tasks.json`, emits a Markdown section per test with the `tool_calls` rendered as a code block, `example_messages` rendered turn-by-turn, and `notes` inlined as prose. Plus a rubric table generated from `assertions[].rationale` + `assertions[].weight`. Result is byte-for-byte close to today's hand-edited `MODEL_ANSWERS.md`. CI runs `git diff --exit-code MODEL_ANSWERS.md` after re-render so drift is impossible.
 

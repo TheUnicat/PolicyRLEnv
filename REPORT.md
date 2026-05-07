@@ -184,4 +184,4 @@ Anything else you’d like to handle on this order?
 - **Synthetic, no real PII.** All companies, customers, prices, and addresses are invented for the benchmark.
 - **Reproducible.** All artifacts (transcripts, DB state, trace, judge cache) are saved per run under `runs/`.
 
-Full details: see [`README.md`](README.md) and [`PHASE_2_PLAN.md`](PHASE_2_PLAN.md).
+Full details: see [`README.md`](README.md) and [`notes/PHASE_2_PLAN.md`](notes/PHASE_2_PLAN.md).

@@ -1,6 +1,6 @@
 # Progress Checklist — Phase 2
 
-> **Status:** TENTATIVE / not started. Drafted 2026-05-06, re-prioritized after the differentiability discussion. Plan: see [PHASE_2_PLAN.md](PHASE_2_PLAN.md). Phase 1 progress: [notes/PROGRESS.md](notes/PROGRESS.md).
+> **Status:** Phase 2 mostly complete (2026-05-07). Headlines (two-agent mode + negotiation tasks + LLM judge + 144-cell sweep) shipped; deferred items at the bottom. Plan: [PHASE_2_PLAN.md](PHASE_2_PLAN.md). Phase 1 progress: [PHASE_1_PROGRESS.md](PHASE_1_PROGRESS.md). Active plan/progress at repo root.
 
 Working checklist. Step 1 (two-agent mode) goes first; Step 2 (tasks for it) second; Step 3 (the rest of the plan) after. Scope and ordering subject to change.
 

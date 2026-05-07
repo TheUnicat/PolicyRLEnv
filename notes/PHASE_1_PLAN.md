@@ -1,6 +1,6 @@
 # Policy Tool-Use Agent Benchmark — Phase 1 Plan
 
-> **Status:** Phase 1 complete (2026-05-05). This document is the original planning doc, lightly edited to reflect what actually shipped (notably: assertions live in `tasks.json` rather than separate `expected/*.json` files; checker is `checker/check.py`; provider abstraction lives in `agent/providers.py`). Phase 2 plan/progress are at the repo root in `../PHASE_2_PLAN.md` and `../PHASE_2_PROGRESS.md`.
+> **Status:** Phase 1 complete (2026-05-05). This document is the original planning doc, lightly edited to reflect what actually shipped (notably: assertions live in `tasks.json` rather than separate `expected/*.json` files; checker is `checker/check.py`; provider abstraction lives in `agent/providers.py`). Phase 2 plan/progress: [PHASE_2_PLAN.md](PHASE_2_PLAN.md) / [PHASE_2_PROGRESS.md](PHASE_2_PROGRESS.md). Active plan/progress at repo root.
 
 > **Source requirements:** see [../requirements/](../requirements/) — the verbatim Deep24 task brief, split by section. The "hard rules" files there (`01_create_rules.md`, `04_submission_files.md`, `06_safety.md`) are the non-negotiables this plan must satisfy.
 
