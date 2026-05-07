@@ -50,7 +50,11 @@ The Prime Intellect integration ticket. Wrap *today's* `tasks.json` through Veri
 ### Notes / footguns found
 - `verifiers.format_dataset` only prepends `system_prompt` when building `prompt` from a `question` column. If rows already include `prompt`, system message must be in the prompt list explicitly. Fixed by writing `prompt = [system, user]` directly in `_build_dataset`.
 - `info` in dataset rows tolerates dict shape only when sub-fields have consistent types across rows. `assertions` field has variable schema by assertion kind, so it's serialized as a JSON string (`assertions_json`) and parsed at use time.
-- Adversary-side I/O still goes through the existing **sync** `OpenAIProvider` (Responses API) inside an async `env_response`. This blocks the event loop briefly during adversary turns — acceptable for eval / single-rollout, will need an async provider for parallel training rollouts.
+- ~~Adversary-side I/O still goes through the existing **sync** `OpenAIProvider` (Responses API) inside an async `env_response`. This blocks the event loop briefly during adversary turns — acceptable for eval / single-rollout, will need an async provider for parallel training rollouts.~~ **Resolved 2026-05-07.** New `adversary_mode` parameter on `load_environment()` selects between two paths:
+  - **`rollout_client`** (default): `_AsyncAdversary` class drives the buyer turn against the same `AsyncOpenAI` client verifiers passed into `rollout()`. Async, Chat Completions API, no extra credentials required. Wall-clock per rollout ~halves vs. the sync path.
+  - **`external_openai`**: legacy sync `OpenAIProvider` (Responses API) preserved as fallback. Useful when the buyer needs a different endpoint than the seller, or to reproduce pre-verifiers behavior.
+  - Both paths share a polymorphic `_adversary_turn(adv, dispatcher, user_msg) → (texts, tool_log)` helper, so `env_response` and the opening-turn logic in `rollout()` don't branch on mode.
+  - Smoke-tested both modes on `1.2_adaptive_lowball` (refusal) and `4.2_palladium_no_buyer_anchor` (negotiation/ZOPA): same scores as the pre-async wrapper.
 
 ### Explicit non-goals for Step 1
 - No procedural generation

@@ -28,10 +28,16 @@ from aurumdesk_negotiation import load_environment
 
 env = load_environment(
     test_ids=["4.1_iridium_negotiation"],   # optional filter; default = all 13 tests
-    adversary_model="gpt-5.4-mini",          # buyer-side model
+    adversary_mode="rollout_client",         # default: share verifiers' AsyncOpenAI client (async, same endpoint as seller)
+    adversary_model="gpt-5.4-mini",          # buyer-side model name
 )
 # then drive via verifiers' rollout/rubric protocol
 ```
+
+### Adversary modes
+
+- **`rollout_client`** (default): the buyer reuses the `AsyncOpenAI` client verifiers passes into `rollout()`. Same endpoint as the seller, async, no extra API key required beyond what the verifiers caller already configured. Works with any OpenAI-compatible endpoint (Prime Inference, vLLM, OpenAI proper). Use this for training and most evaluation.
+- **`external_openai`**: the buyer uses the legacy sync `OpenAIProvider` (OpenAI Responses API), reading `OPENAI_API_KEY` / `OPENAI_BASE_URL` from the environment. Useful when you specifically want a different endpoint for the buyer (e.g., a frontier OpenAI model on the buyer side while the seller runs on local vLLM), or to reproduce the pre-verifiers behavior of our 144-cell sweep.
 
 A one-shot smoke test driver lives at `aurumdesk_negotiation/smoke_test.py`:
 
