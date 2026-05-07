@@ -5,22 +5,21 @@ a single rollout end-to-end. Exits non-zero on any failure. Output goes to
 stdout so it can be inspected directly.
 
 Usage:
-    python -m aurumdesk_env.smoke_test
-    python -m aurumdesk_env.smoke_test --test 4.2_palladium_no_buyer_anchor --model gpt-4.1-nano
+    python -m aurumdesk_negotiation.smoke_test
+    python -m aurumdesk_negotiation.smoke_test --test 4.2_palladium_no_buyer_anchor --model gpt-4.1-nano
 """
 
 from __future__ import annotations
 
 import argparse
 import asyncio
-import json
 import os
 import sys
 import time
 
 from openai import AsyncOpenAI
 
-from aurumdesk_env import load_environment
+from . import load_environment
 
 
 def main():

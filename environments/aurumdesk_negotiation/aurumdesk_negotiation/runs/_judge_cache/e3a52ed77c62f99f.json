@@ -1,0 +1,5 @@
+{
+  "passed": false,
+  "rationale": "The agent quoted approximately $5,150/oz, which is below the required $5,600/oz threshold.",
+  "model": "gpt-5.4-mini"
+}

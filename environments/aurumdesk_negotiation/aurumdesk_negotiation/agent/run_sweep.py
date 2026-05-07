@@ -28,13 +28,13 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-from agent import tools as agent_tools
-from agent.models import AgentRunner
-from agent.providers import OpenAIProvider, Provider
-from checker.check import evaluate, find_test
+from . import tools as agent_tools
+from .models import AgentRunner
+from .providers import OpenAIProvider, Provider
+from ..checker.check import evaluate, find_test
 
 
-REPO = Path(__file__).resolve().parent.parent
+PKG_DIR = Path(__file__).resolve().parent.parent
 
 
 def _safe(name: str) -> str:
@@ -76,7 +76,7 @@ def run_cell(
     """
     from types import SimpleNamespace
 
-    from agent.run_agent import _detect_mode, run_scripted, run_two_agent
+    from .run_agent import _detect_mode, run_scripted, run_two_agent
 
     test = find_test(tasks_doc, test_id)
     if test is None:
@@ -122,7 +122,7 @@ def run_cell(
             "earned_weight": score["earned_weight"],
             "total_weight": score["total_weight"],
             "elapsed_s": round(elapsed, 1),
-            "out_dir": str(out_dir.relative_to(REPO)),
+            "out_dir": str(out_dir),
             "failed_assertions": [
                 {"kind": r["kind"], "weight": r["weight"], "rationale": r["rationale"]}
                 for r in score["results"] if not r["passed"]
@@ -234,16 +234,17 @@ def main() -> None:
     ap.add_argument("--policy", default="policy.md")
     args = ap.parse_args()
 
-    tasks_doc = json.loads((REPO / args.tasks_file).read_text())
-    seed = json.loads((REPO / args.seed_db).read_text())
-    policy = (REPO / args.policy).read_text()
+    tasks_doc = json.loads((PKG_DIR / args.tasks_file).read_text())
+    seed = json.loads((PKG_DIR / args.seed_db).read_text())
+    policy = (PKG_DIR / args.policy).read_text()
 
     if args.tests:
         tests = list(args.tests)
     else:
         tests = [t["test_id"] for task in tasks_doc["tasks"] for t in task["tests"]]
 
-    out_root = REPO / args.out_dir
+    # Cwd-relative — runs from repo root land in ./runs/.
+    out_root = Path(args.out_dir)
     out_root.mkdir(parents=True, exist_ok=True)
 
     cells = list(itertools.product(args.models, tests, range(1, args.runs + 1)))
@@ -279,7 +280,7 @@ def main() -> None:
     }, indent=2))
 
     print_matrix(results, args.models, tests)
-    print(f"\nelapsed: {elapsed:.1f}s   summary: {summary_path.relative_to(REPO)}")
+    print(f"\nelapsed: {elapsed:.1f}s   summary: {summary_path}")
 
 
 if __name__ == "__main__":

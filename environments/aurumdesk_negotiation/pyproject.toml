@@ -14,5 +14,15 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["aurumdesk_env*", "agent*", "checker*"]
-exclude = ["runs*", "notes*", "prompts*", "requirements*", "tools*"]
+include = ["aurumdesk_negotiation*"]
+
+[tool.setuptools.package-data]
+aurumdesk_negotiation = [
+    "policy.md",
+    "tasks.json",
+    "seed_db.json",
+    "tools.md",
+    "MODEL_ANSWERS.md",
+    "prompts/*.md",
+    "prompts/**/*.md",
+]

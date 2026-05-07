@@ -16,10 +16,10 @@ Working checklist. Step 1 (Verifiers wrapper around the existing bench) goes fir
 The Prime Intellect integration ticket. Wrap *today's* `tasks.json` through Verifiers; defer all generator / adversary / split work to later steps. Goal: prove the env runs end-to-end on PI's stack.
 
 ### Packaging
-- [x] Add `pyproject.toml` — package `aurumdesk-negotiation`, includes `aurumdesk_env`, `agent`, `checker` packages; pins `verifiers>=0.1.5`, `openai>=1.55`, `datasets>=2.20`
-- [x] Layout decision: keep existing `agent/` / `checker/` / `tools/` (re-exported via inclusion in `pyproject.toml`); add a new `aurumdesk_env/` namespace that depends on them. Avoids restructuring; existing CLI keeps working unchanged.
-- [x] Confirm `pip install -e .` works (verified in repo's `.venv` 2026-05-07)
-- [x] Confirm existing `python -m agent.run_agent` / `python -m agent.run_sweep` CLI imports unchanged
+- [x] Add `pyproject.toml` — package `aurumdesk-negotiation`; pins `verifiers>=0.1.5`, `openai>=1.55`, `datasets>=2.20`
+- [x] **Layout decision: full restructure (option 3b).** All env-internal source moved to `environments/aurumdesk_negotiation/aurumdesk_negotiation/` (matches Prime Intellect's hub convention). Self-contained: env directory has no path dependencies on the parent repo. Repo-level concerns (PLAN, PROGRESS, REPORT, runs/, tools/render_report.py, README, notes/, requirements/) stay at root.
+- [x] Confirm `pip install -e environments/aurumdesk_negotiation` works (verified 2026-05-07)
+- [x] Confirm legacy CLI imports updated and still work: `python -m aurumdesk_negotiation.agent.run_agent`, `python -m aurumdesk_negotiation.agent.run_sweep`
 
 ### Environment subclass
 - [x] `aurumdesk_env/env.py` — `AurumDeskNegotiationEnv(vf.MultiTurnEnv)`

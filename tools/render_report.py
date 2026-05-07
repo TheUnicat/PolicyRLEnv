@@ -42,6 +42,7 @@ from typing import Any
 
 REPO = Path(__file__).resolve().parent.parent
 RUNS = REPO / "runs"
+ENV_PKG = REPO / "environments" / "aurumdesk_negotiation" / "aurumdesk_negotiation"
 
 
 # ---------- Data shape ----------
@@ -286,7 +287,7 @@ def _section_headline(cells: dict[tuple[str, str], Cell], rows: list[CellRow]) -
     else:
         out += (
             "Insufficient data across categories to produce a headline finding — "
-            "run more cells via `agent/run_sweep.py` and re-render.\n"
+            "run more cells via `python -m aurumdesk_negotiation.agent.run_sweep` and re-render.\n"
         )
     return out + "\n"
 
@@ -389,7 +390,7 @@ def _section_sample_trajectory(rows: list[CellRow]) -> str:
     # Fallback for scripted tests (no adversary_messages.json): load the fixed
     # user_messages from tasks.json so the buyer side of the trajectory is visible.
     if not adv_msgs:
-        tasks_doc = _read_json(REPO / "tasks.json") or {}
+        tasks_doc = _read_json(ENV_PKG / "tasks.json") or {}
         for task in tasks_doc.get("tasks", []):
             for test in task.get("tests", []):
                 if test.get("test_id") == worst.test_id and "user_messages" in test:
@@ -476,7 +477,7 @@ def main() -> None:
             "# AurumDesk Benchmark — No Results Yet\n\n"
             "No runs found under `runs/`. Run a sweep first:\n\n"
             "```bash\n"
-            ".venv/bin/python -m agent.run_sweep --models gpt-5.4 --runs 1\n"
+            ".venv/bin/python -m aurumdesk_negotiation.agent.run_sweep --models gpt-5.4 --runs 1\n"
             "```\n"
         )
         print(f"No runs found. Wrote stub to {out_path}.")

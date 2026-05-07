@@ -27,15 +27,15 @@ import copy
 import json
 from pathlib import Path
 
-from agent import tools as agent_tools
-from agent.adversary_tools import ADVERSARY_TOOL_SCHEMAS, make_adversary_dispatcher
-from agent.models import AgentRunner
-from agent.providers import OpenAIProvider
-from agent.two_agent import TwoAgentRunner
-from checker.check import evaluate, find_test
+from . import tools as agent_tools
+from .adversary_tools import ADVERSARY_TOOL_SCHEMAS, make_adversary_dispatcher
+from .models import AgentRunner
+from .providers import OpenAIProvider
+from .two_agent import TwoAgentRunner
+from ..checker.check import evaluate, find_test
 
 
-REPO = Path(__file__).resolve().parent.parent
+PKG_DIR = Path(__file__).resolve().parent.parent
 
 DEFAULT_SCENARIO_CUE = "[Begin the conversation. You speak first.]"
 
@@ -92,7 +92,7 @@ def run_scripted(test: dict, args, policy: str, db: dict, out_dir: Path) -> dict
 # ---------- Two-agent mode ----------
 
 def run_two_agent(test: dict, args, policy: str, db: dict, out_dir: Path) -> dict:
-    adv_prompt_path = REPO / test["adversary_prompt_file"]
+    adv_prompt_path = PKG_DIR / test["adversary_prompt_file"]
     if not adv_prompt_path.exists():
         raise SystemExit(f"adversary_prompt_file not found: {adv_prompt_path}")
     adv_prompt = adv_prompt_path.read_text()
@@ -103,7 +103,7 @@ def run_two_agent(test: dict, args, policy: str, db: dict, out_dir: Path) -> dic
     # hard-bargaining honestly.
     prepend_path_rel = test.get("adversary_prompt_prepend")
     if prepend_path_rel:
-        prepend_path = REPO / prepend_path_rel
+        prepend_path = PKG_DIR / prepend_path_rel
         if not prepend_path.exists():
             raise SystemExit(f"adversary_prompt_prepend not found: {prepend_path}")
         adv_prompt = prepend_path.read_text() + adv_prompt
@@ -182,16 +182,18 @@ def main() -> None:
     ap.add_argument("--policy", default="policy.md")
     args = ap.parse_args()
 
-    tasks_doc = json.loads((REPO / args.tasks_file).read_text())
+    tasks_doc = json.loads((PKG_DIR / args.tasks_file).read_text())
     test = find_test(tasks_doc, args.test)
     if test is None:
         raise SystemExit(f"test_id not found in {args.tasks_file}: {args.test}")
 
-    seed = json.loads((REPO / args.seed_db).read_text())
-    policy = (REPO / args.policy).read_text()
+    seed = json.loads((PKG_DIR / args.seed_db).read_text())
+    policy = (PKG_DIR / args.policy).read_text()
     db = copy.deepcopy(seed)
 
-    out_dir = REPO / args.out_dir / _safe(args.model) / args.test / f"run_{args.run_id}"
+    # `out_dir` is cwd-relative — runs from the repo root land in ./runs/, runs
+    # from elsewhere land relative to the user's cwd. Pass --out-dir for an absolute path.
+    out_dir = Path(args.out_dir) / _safe(args.model) / args.test / f"run_{args.run_id}"
 
     mode = _detect_mode(test)
     if mode == "scripted":
@@ -203,7 +205,7 @@ def main() -> None:
     for r in score["results"]:
         flag = "PASS" if r["passed"] else "FAIL"
         print(f"  [{flag}] w={r['weight']}  {r['kind']:24s}  {r['rationale'][:80]}")
-    print(f"\noutput: {out_dir.relative_to(REPO)}")
+    print(f"\noutput: {out_dir}")
 
 
 if __name__ == "__main__":

@@ -30,16 +30,16 @@ from pathlib import Path
 import verifiers as vf
 from datasets import Dataset
 
-from agent import tools as agent_tools
-from agent.adversary_tools import (
+from .agent import tools as agent_tools
+from .agent.adversary_tools import (
     ADVERSARY_TOOL_SCHEMAS,
     make_adversary_dispatcher,
 )
-from agent.providers import OpenAIProvider
-from checker.check import evaluate
+from .agent.providers import OpenAIProvider
+from .checker.check import evaluate
 
 
-REPO = Path(__file__).resolve().parent.parent
+PKG_DIR = Path(__file__).resolve().parent
 DEFAULT_ADVERSARY_MODEL = "gpt-5.4-mini"
 
 
@@ -178,11 +178,11 @@ class AurumDeskNegotiationEnv(vf.MultiTurnEnv):
         )
 
     def _build_adversary_provider(self, info: dict) -> OpenAIProvider:
-        adv_path = REPO / info["adversary_prompt_file"]
+        adv_path = PKG_DIR / info["adversary_prompt_file"]
         adv_prompt = adv_path.read_text()
         prepend_rel = info.get("adversary_prompt_prepend") or ""
         if prepend_rel:
-            adv_prompt = (REPO / prepend_rel).read_text() + adv_prompt
+            adv_prompt = (PKG_DIR / prepend_rel).read_text() + adv_prompt
         return OpenAIProvider(
             model=self._adversary_model,
             system_prompt=adv_prompt,
@@ -319,9 +319,9 @@ def load_environment(
     seed_db_file: str = "seed_db.json",
     policy_file: str = "policy.md",
 ) -> vf.Environment:
-    tasks_doc = json.loads((REPO / tasks_file).read_text())
-    seed_db = json.loads((REPO / seed_db_file).read_text())
-    policy = (REPO / policy_file).read_text()
+    tasks_doc = json.loads((PKG_DIR / tasks_file).read_text())
+    seed_db = json.loads((PKG_DIR / seed_db_file).read_text())
+    policy = (PKG_DIR / policy_file).read_text()
     return AurumDeskNegotiationEnv(
         tasks_doc=tasks_doc,
         seed_db=seed_db,
